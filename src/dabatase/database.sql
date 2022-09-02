@@ -1,13 +1,16 @@
 CREATE DATABASE planilla;
+use planilla;
 CREATE TABLE tbl_user(
-    userId int PRIMARY KEY NOT NULL,
+    userId int PRIMARY KEY AUTO_INCREMENT NOT NULL,
     userFirstName VARCHAR(30),
     userLastName VARCHAR(30),
     userEmail VARCHAR(100),
     userDni VARCHAR(8),
     userStatus  TINYINT NOT NULL,
-    UNIQUE KEY `userEmail_UNIQUE`(`userEmail`)
-)
+    userCreated timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    userUpdated timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY `userEmail_UNIQUE`(`userEmail`)    
+);
 -- iden BINARY(16) PRIMARY KEY NOT NULL DEFAULT (UUID_TO_BIN(UUID())), /*ID*/
 -- celu CHAR(9) NOT NULL, /*CELULAR*/
 -- nomb VARCHAR(30) NOT NULL, /*NOMBRE*/

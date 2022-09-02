@@ -37,10 +37,32 @@ const router = Router();
  *              '400':
  *                  description: email or dni invalid
  */
-
 router.get('/user/signin/:userEmail/:userDni',userController.signinUser);
-router.get('/user/profile/:userId',verifyToken,userController.profile);
+/**
+ * @swagger
+ * /user/signup:
+ *      post:
+ *          tags:
+ *              - user
+ *          summary: Sign-up user.
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/signupUser'
+ *          responses:
+ *              '200':
+ *                  description: user created
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/signinUser'
+ *              '400':
+ *                  description: email or dni invalid
+*/
 router.post('/user/signup',userController.signupUser)
+router.get('/user/profile/:userId',verifyToken,userController.profile);
 
 
 

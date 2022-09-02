@@ -34,7 +34,7 @@ const swaggerDefinition={
                     }
                 }
             },
-            user:{
+            signupUser:{
                 type:"object",
                 properties:{
                     userFirstName:{
@@ -48,10 +48,7 @@ const swaggerDefinition={
                     },
                     userDni:{
                         type:"string"
-                    },
-                    userStatus:{
-                        type:"number"
-                    }
+                    },                   
                 }
             }
         },
