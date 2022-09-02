@@ -9,35 +9,28 @@ import {validationSchema} from '../middleware/validation_schema.middleware';
 const router = Router();
 /**
  * @swagger
- *  /user/signin/{userEmail}/{userDni}:
- *      get:
+ *  /user/signin:
+ *      post:
  *          tags:
  *              - user
  *          summary: Sign-in user
- *          parameters:
- *          -   name: userEmail
- *              in: path
- *              description: user's email
+ *          requestBody:
  *              required: true
- *              schema:
- *                  type: string
- *          -   name: userDni
- *              in: path
- *              description: user's Dni
- *              required: true
- *              schema:
- *                  type: string
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/signinUser'
  *          responses:
  *              '200':
  *                  description: succesful
  *                  content:
  *                      application/json:
  *                          schema:
- *                              $ref: '#/components/schemas/signinUser'
+ *                              $ref: '#/components/schemas/signinResponse'
  *              '400':
  *                  description: email or dni invalid
  */
-router.get('/user/signin/:userEmail/:userDni',userController.signinUser);
+router.post('/user/signin',userController.signinUser);
 /**
  * @swagger
  * /user/signup:
@@ -67,3 +60,19 @@ router.get('/user/profile/:userId',verifyToken,userController.profile);
 
 
 export default router;
+/*
+*
+ *          parameters:
+ *          -   name: userEmail
+ *              in: path
+ *              description: user's email
+ *              required: true
+ *              schema:
+ *                  type: string
+ *          -   name: userDni
+ *              in: path
+ *              description: user's Dni
+ *              required: true
+ *              schema:
+ *                  type: string 
+*/

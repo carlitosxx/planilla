@@ -4,7 +4,7 @@ import {handleHttp} from "../utils/error.handle";
 import {createUser, getProfile, validateUser} from "../services/user.service";
 
 
-// signup User
+// signup User [POST]
 export const signupUser=async(req:Request, res:Response)=>{
     try {
         const response = await createUser(req);
@@ -13,7 +13,7 @@ export const signupUser=async(req:Request, res:Response)=>{
         handleHttp(res,"ERROR_GET_signupUser",error);
     }
 }
-// sign in User [GET]
+// sign in User [POST]
 export const signinUser=async(req:Request, res:Response)=>{
     try {    
         const response=await validateUser(req);

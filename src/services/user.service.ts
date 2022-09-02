@@ -5,7 +5,7 @@ import { Iuser } from '../models/raw/user.model';
 
 export const validateUser=async(req:Request)=>{
    let response;
-   const {userEmail,userDni}=req.params;         
+   const {userEmail,userDni}=req.body;         
         const query = await pool.query(`
         SELECT * 
         FROM 

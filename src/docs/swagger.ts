@@ -10,17 +10,7 @@ const swaggerDefinition={
         {
             url:"http://165.227.198.57:4000"}
 
-    ],
-    // paths:{
-    //     "/user/signin/{userEmail}/{userDni}":{
-    //         get:{
-    //             summary:"Descripcion de usuario",
-    //             parameters:{
-    //                 name:"userEmail"
-    //             }
-    //         }
-    //     }
-    // },
+    ],   
     components:{
         schemas:{
             signinUser:{
@@ -50,7 +40,40 @@ const swaggerDefinition={
                         type:"string"
                     },                   
                 }
+            },
+            signinResponse:{
+                type:"object",
+                properties:{
+                    token:{
+                        type:"string"
+                    },
+                    userId:{
+                        type:"integer"
+                    },
+                    userFirstName:{
+                        type:"string"
+                    },
+                    userLastName:{
+                        type:"string"
+                    },
+                    userEmail:{
+                        type:"string"
+                    },
+                    userDni:{
+                        type:"string"
+                    },
+                    userStatus:{
+                        type:"integer"
+                    },
+                    userCreated:{
+                        type:"string"
+                    },
+                    userUpdated:{
+                        type:"string"
+                    },
+                }
             }
+
         },
         securitySchemes:{
             Authorization:{
