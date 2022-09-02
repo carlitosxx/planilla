@@ -8,7 +8,7 @@ const swaggerDefinition={
     },
     servers:[
         {
-            url:"http://165.227.198.57/:4000"}
+            url:"http://165.227.198.57:4000"}
 
     ],
     // paths:{
