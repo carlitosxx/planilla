@@ -1,4 +1,4 @@
-import {Request} from 'express';
+import {Request, response} from 'express';
 import {pool} from '../database';
 import jwt from 'jsonwebtoken';
 import { Iuser } from '../models/raw/user.model';
@@ -11,8 +11,8 @@ export const validateUser=async(req:Request)=>{
         FROM 
             planilla.tbl_user as u
         WHERE
-            u.user_email=? and
-            u.user_dni=?
+            u.userEmail=? and
+            u.userDni=?
         `,[userEmail,userDni]);      
         const userParse = JSON.parse(JSON.stringify(query[0]));                     
         if (Object.entries(query[0]).length===0){           
@@ -53,4 +53,27 @@ export const getProfile=async(req:Request)=>{
         code:200
     }               
     return response;
+}
+export const createUser=async(req:Request)=>{
+    let response;
+     const {userFirstName,userLastName,userEmail,userDni}=req.body;
+        const query = await pool.query(`
+        INSERT INTO 
+        tbl_user (
+            userFirstName,
+            userLastName,
+            userDni,
+            userEmail,
+            userStatus)
+        values(?,?,?,?,1)
+        `,[userFirstName,userLastName,userDni,userEmail]); 
+        response={
+            body:{msg:"user created"},
+            code:200
+        }   
+        // if (Object.entries(query[0]).length===0){
+
+        // }
+
+        return response;
 }

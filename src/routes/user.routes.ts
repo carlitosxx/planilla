@@ -40,6 +40,7 @@ const router = Router();
 
 router.get('/user/signin/:userEmail/:userDni',userController.signinUser);
 router.get('/user/profile/:userId',verifyToken,userController.profile);
+router.post('/user/signup',userController.signupUser)
 
 
 
