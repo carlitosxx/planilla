@@ -37,7 +37,7 @@ export const getProfile=async(req:Request)=>{
     Select * 
     from planilla.tbl_user as u
     where
-        u.user_id=? 
+        u.userId=? 
     `,[userId]);      
     const userParse = JSON.parse(JSON.stringify(query[0]));
     const result=Object.entries(query[0])

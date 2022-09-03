@@ -1,5 +1,6 @@
 import swaggerJSDoc from "swagger-jsdoc";
-
+import dotenv from 'dotenv';
+dotenv.config();
 const swaggerDefinition={
     openapi:"3.0.3",
     info:{
@@ -8,7 +9,17 @@ const swaggerDefinition={
     },
     servers:[
         {
-            url:"http://165.227.198.57:4000"}
+            //produccion
+            // url:`http://${process.env.SWAGGER_HOST}:4000`,
+            //pruebas
+            url:`http://${process.env.SWAGGER_HOST}:4000`
+        },
+        {
+            //produccion
+            // url:`http://${process.env.SWAGGER_HOST}:4000`,
+            //pruebas
+            url:`http://127.0.0.1:4000`
+        }
 
     ],   
     components:{
@@ -17,10 +28,12 @@ const swaggerDefinition={
                 type:"object",
                 properties:{
                     userEmail:{
-                        type:"string"
+                        type:"string",
+                        maxLength: 100
                     },
                     userDni:{
-                        type:"string"
+                        type:"string",
+                        maxLength: 8
                     }
                 }
             },
@@ -28,16 +41,20 @@ const swaggerDefinition={
                 type:"object",
                 properties:{
                     userFirstName:{
-                        type:"string"
+                        type:"string",
+                        maxLength: 30
                     },
                     userLastName:{
-                        type:"string"
+                        type:"string",
+                        maxLength: 30
                     },
                     userEmail:{
-                        type:"string"
+                        type:"string",
+                        maxLength: 100
                     },
                     userDni:{
-                        type:"string"
+                        type:"string",
+                        maxLength: 8
                     },                   
                 }
             },
@@ -71,6 +88,68 @@ const swaggerDefinition={
                     userUpdated:{
                         type:"string"
                     },
+                }
+            },
+            addCategory:{
+                type:"object",
+                properties:{
+                    employeeCategoryDescription:{
+                        type:"string",
+                        maxLength: 100
+                    },
+                    employeeCategoryShortDescription:{
+                        type:"string",
+                        maxLength: 10
+                    },
+                }
+            },
+            succesfulResponse:{
+                type:"object",
+                properties:{
+                    msg:{
+                        type:"string"
+                    }
+                }
+            },
+            errorResponse:{
+                type:"object",
+                properties:{
+                    errorNo:{
+                        type:"number"
+                    },
+                    errorMessage:{
+                        type:"string"
+                    }
+                }
+            },
+            addCategorySalary:{
+                type:"object",
+                properties:{
+                    categorySalarySalary:{
+                        type:"number"
+                    },
+                    categorySalaryYear:{
+                        type:"integer"
+                    },
+                    employeeCategoryId:{
+                        type:"integer"
+                    }
+                }
+            },
+            addEmployee:{
+                type:"object",
+                properties:{
+                    employeeDni:{
+                        type:"string",
+                        maxLength:8
+                    },
+                    employeeFullname:{
+                        type:"string",
+                        maxLength:100
+                    },
+                    categorySalaryId:{
+                        type:"integer"
+                    }
                 }
             }
 

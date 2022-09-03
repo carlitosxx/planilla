@@ -54,7 +54,16 @@ router.post('/user/signin',userController.signinUser);
  *              '400':
  *                  description: email or dni invalid
 */
-router.post('/user/signup',userController.signupUser)
+router.post('/user/signup',userController.signupUser);
+/**
+ * @swagger
+ * /user/profile/:userId:
+ *      get:
+ *          tags:
+ *              - user
+ *          summary: Get profile by userId
+ * 
+ */
 router.get('/user/profile/:userId',verifyToken,userController.profile);
 
 

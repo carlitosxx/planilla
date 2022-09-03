@@ -6,6 +6,7 @@ import cors from 'cors';
 import "dotenv/config";
 import {connectDb} from './database';
 import userRoute from './routes/user.routes';
+import employeeRoute from './routes/employee.routes';
 
 const app = express();
 const port= process.env.PORT;
@@ -30,6 +31,7 @@ app.use(function (error: any, req: any, res: any, next: () => void) {
 app.use("/documentation",swaggerUi.serve,swaggerUi.setup(openApiConfiguration))
 // Routes API
 app.use(userRoute);
+app.use(employeeRoute);
 // Executing server and Connect to DB
 app.listen(port,()=>{
 console.log('listening on port: ',port)
