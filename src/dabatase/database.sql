@@ -54,3 +54,20 @@ WHERE NOT EXISTS (	SELECT *
 					LIMIT 1);
 END$$
 DELIMITER ;
+
+USE `planilla`;
+DROP procedure IF EXISTS `planilla`.`sp_get_emplyeesByPageSize_SYNTAX_ERROR`;
+;
+
+DELIMITER $$
+USE `planilla`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_emplyeesByPageSize`(in Ppage int, in Psize int)
+BEGIN
+	SET @pag= (Ppage-1)*Psize;    
+	SET @qry_string=concat("SELECT * FROM tbl_employee order by employeeFullname limit ",@pag,",",Psize);
+	prepare qry from @qry_string;
+	execute qry;
+END$$
+
+DELIMITER ;
+;

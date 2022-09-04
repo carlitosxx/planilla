@@ -93,9 +93,8 @@ export const createCategorySalary=async(req:Request)=>{
     const {categorySalarySalary,categorySalaryYear,employeeCategoryId}=req.body;
     const query=await pool.query(`
     call planilla.sp_insert_categorySalary(?, ?, ?);
-    `,[categorySalaryYear,employeeCategoryId,categorySalarySalary]);
-    
-    const queryParse = JSON.parse(JSON.stringify(query[0])); 
+    `,[categorySalaryYear,employeeCategoryId,categorySalarySalary]);    
+    const queryParse = JSON.parse(JSON.stringify(query[0]));     
     if (queryParse.affectedRows==0){
        return response={
             body:{errorNo:1062,errorMessage:"categorySalaryYear and employeeCategoryId duplicate"},
@@ -104,7 +103,7 @@ export const createCategorySalary=async(req:Request)=>{
     }
     response={
         body:{msg:"salary created"},
-        code:403
+        code:200
     }  
     return response;
 }
