@@ -9,8 +9,11 @@ const handleHttp = (res:Response,error:string,rawError:any)=>{
     }else if(rawError.errno==1452){
         res.status(403);
         res.send({errorNo:rawError.errno,errorMessage:rawError.sqlMessage})
-
+    }else if (rawError.errno==1366){
+        res.status(403);
+        res.send({errorNo:rawError.errno,errorMessage:rawError.sqlMessage})
     }
+
     else{
         res.status(400);
         res.send({error});

@@ -151,6 +151,53 @@ const swaggerDefinition={
                         type:"integer"
                     }
                 }
+            },
+            updateEmployee:{
+                type:"object",
+                properties:{
+                    employeeDni:{
+                        type:"string",
+                        maxLength:8
+                    },
+                    employeeFullname:{
+                        type:"string",
+                        maxLength:100
+                    },
+                    employeeStatus:{
+                        type:"integer"
+                    },
+                    categorySalaryId:{
+                        type:"integer"
+                    },                    
+                }
+            },
+            getEmployeesResponse:{
+                type:"object",
+                properties:{
+                    countEmployees:{
+                        type:"integer"
+                    },
+                    employees:{
+                        type:"array",
+                        items:{
+                            type:"object",
+                            properties:{                                
+                                employeeDni:{
+                                    type:"string",                                    
+                                },
+                                employeeFullname:{
+                                    type:"string"
+                                },
+                                employeeStatus:{
+                                    type:"integer"
+                                },
+                                categorySalaryId:{
+                                    type:"integer"
+                                }
+                            }
+                        }
+                    }   
+                }
             }
 
         },

@@ -42,10 +42,83 @@ const router=Router();
  *              
 */
 router.post('/employee',verifyToken,employeeController.addEmployee);
-//update employee
-//TODO:
-
-
+/**
+ * @swagger
+ * /employee/{employeeId}:
+ *      put:
+ *          tags:
+ *              - employee
+ *          summary: update employee by employeeId
+ *          security:
+ *              - Authorization: []
+ *          parameters:
+ *          -   name: X-Frame-Options
+ *              in: header
+ *              required: true
+ *              description: only "deny" is allowed
+ *          -   name: accept
+ *              in: header
+ *              required: true
+ *              description: only "application/json" is allowed
+ *          -   name: employeeId
+ *              in: path
+ *              required: true
+ *              description: employee id
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/updateEmployee'
+ *          responses:
+ *              '200':
+ *                  description: succesful
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#components/schemas/succesfulResponse'
+ *              '404':
+ *                  description: employee has already been updated
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#components/schemas/errorResponse' 
+ */
+router.put('/employee/:employeeId',verifyToken,employeeController.updateEmployee);
+/**
+ * @swagger
+ * /employee:
+ *      get:
+ *          tags:
+ *              - employee
+ *          summary: get employees by page and size
+ *          security:
+ *              - Authorization: []
+ *          parameters:
+ *          -   name: page
+ *              in: query
+ *              required: true
+ *          -   name: size
+ *              in: query
+ *              required: true
+ *          -   name: X-Frame-Options
+ *              in: header
+ *              required: true
+ *              description: only "deny" is allowed
+ *          -   name: Accept
+ *              in: header
+ *              required: true
+ *              description: only "application/json" is allowed *         
+ *          responses:
+ *              '200':
+ *                  description: succesful
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#components/schemas/getEmployeesResponse'
+ *          
+ */
+router.get('/employee',verifyToken,employeeController.getEmployees);
 /**
  * @swagger
  * /employee/category:
@@ -60,7 +133,7 @@ router.post('/employee',verifyToken,employeeController.addEmployee);
  *              in: header
  *              required: true
  *              description: only "deny" is allowed
- *          -   name: accept
+ *          -   name: Accept
  *              in: header
  *              required: true
  *              description: only "application/json" is allowed
@@ -127,4 +200,6 @@ router.post('/employee/category',verifyToken,employeeController.addCategory);
  */
 router.post('/employee/category_salary',verifyToken,employeeController.addCategorySalary);
 
+//test
+router.get('/employee',employeeController.test)
 export default router;

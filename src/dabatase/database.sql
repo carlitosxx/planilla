@@ -16,7 +16,7 @@ CREATE TABLE tbl_employee_category(
     employeeCategoryId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     employeeCategoryDescription VARCHAR(100) NOT NULL,
     employeeCategoryShortDescription VARCHAR(10) NOT NULL,
-    UNIQUE KEY `employeeCategoryShortDescription_UNIQUE`(`employeeCategoryShortDescription`),
+    UNIQUE KEY `employeeCategoryShortDescription_UNIQUE`(`employeeCategoryShortDescription`)
 );
 CREATE TABLE tbl_category_salary(
     categorySalaryId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,

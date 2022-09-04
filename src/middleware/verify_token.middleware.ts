@@ -4,14 +4,14 @@ export const verifyToken = (req:Request,res:Response,next:NextFunction)=>{
     try {
         //Headers const
         const tokenheader = req.header('authorization');
-        const contenttype= req.header('Content-Type');
+        // const contenttype= req.header('Content-Type');
         const accept= req.header('Accept');
         const xframeoptions= req.header('X-Frame-Options');
         //Header validation (406)
-        if(contenttype!='application/json'){
-            console.log(`verify_Token.middleware: Content-Type must be application/json`);
-            return res.status(406).json('Content-Type must be application/json');
-        }
+        // if(contenttype!='application/json'){
+        //     console.log(`verify_Token.middleware: Content-Type must be application/json`);
+        //     return res.status(406).json('Content-Type must be application/json');
+        // }
         if( accept !='application/json'){
             console.log(`verify_Token.middleware: Accept must be application/json`);
             return res.status(406).json('accept  must be application/json');
