@@ -88,6 +88,79 @@ export const createCategory=async(req:Request)=>{
     }
     return response;
 }
+export const updateDataCategory=async(req:Request)=>{
+    let response;
+    const {categoryId}=req.params
+    const {employeeCategoryDescription,employeeCategoryShortDescription}=req.body
+    const query=await pool.query(`
+    UPDATE tbl_employee_category 
+    SET
+        employeeCategoryDescription=?,
+        employeeCategoryShortDescription=?,              
+    WHERE
+        categoryId=?;
+    `,[employeeCategoryDescription,employeeCategoryShortDescription,categoryId])
+    const consultaParse = JSON.parse(JSON.stringify(query[0]));
+    if (consultaParse.changedRows==1){    
+        response={
+            body:{msg:"category updated"},
+            code:200
+        }
+        return response;          
+    }else{     
+        response={
+            body:{errorNo:404,errorMessage:"category has already been updated"},
+            code:404
+        }
+        return response;  
+    }       
+}
+export const getDataCategory=async(req:Request)=>{
+    let response;
+    const {page,size,employeeCategoryId}=req.query
+    if(page && size && employeeCategoryId!){
+        const queryPagination=await pool.query(`
+            call sp_get_categoryByPageSize(?,?)
+        `,[page,size]);
+        const queryCount=await pool.query(`
+        select count(*) as count from tbl_employee_category
+        `);
+        const paginationParse = JSON.parse(JSON.stringify(queryPagination[0])); 
+        const countCategories = JSON.parse(JSON.stringify(queryCount[0]));
+        return response={
+            body:{countCategories:countCategories[0].count,employees:paginationParse[0]},
+            code:200
+        } 
+    }else if (employeeCategoryId){
+        const queryCategories=await pool.query(`
+        select * from tbl_employee_category where employeeCategoryId=?
+        `,[employeeCategoryId])     
+        const queryCategoriesParse = JSON.parse(JSON.stringify(queryCategories[0]));    
+        return response={
+            body:{category:queryCategoriesParse[0]},
+            code:200
+        } ;
+    }
+    else {
+        console.log('paso por aqui sin parametros')
+        const queryCategories=await pool.query(`
+        select * from tbl_employee_category
+        `)
+        const queryCount= await pool.query(`
+        select count(*) as count from tbl_employee_category
+        `)
+        const queryCategoriesParse = JSON.parse(JSON.stringify(queryCategories[0]));
+        const countCategories = JSON.parse(JSON.stringify(queryCount[0])); 
+        console.log(queryCategoriesParse)
+        console.log(countCategories)
+        return response={
+            // body:[...queryCategoriesParse],
+            body:{countCategories:countCategories[0].count,categories:[...queryCategoriesParse]},
+            code:200
+        } ;
+    }
+    
+}
 export const createCategorySalary=async(req:Request)=>{
     let response;
     const {categorySalarySalary,categorySalaryYear,employeeCategoryId}=req.body;

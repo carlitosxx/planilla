@@ -103,6 +103,20 @@ const swaggerDefinition={
                     },
                 }
             },
+            updateCategory:{
+                type:"object",
+                properties:{
+                    employeeCategoryDescription:{
+                        type:"string",
+                        maxLength:100
+                    },
+                    employeeCategoryShortDescription:{
+                        tpe:"string",
+                        maxLength:10
+                    }
+                }
+
+            },
             succesfulResponse:{
                 type:"object",
                 properties:{

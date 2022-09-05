@@ -1,6 +1,6 @@
 import {Request,Response} from 'express';
 import {handleHttp} from "../utils/error.handle";
-import {createCategory, createEmployee,createCategorySalary, updateDataEmployee, getEmployeesByPageSize} from "../services/employee.service";
+import {createCategory, createEmployee,createCategorySalary, updateDataEmployee, getEmployeesByPageSize, updateDataCategory, getDataCategory} from "../services/employee.service";
 
 export const addEmployee=async(req:Request,res:Response)=>{
     try {
@@ -15,7 +15,7 @@ export const updateEmployee=async(req:Request,res:Response)=>{
         const response=await updateDataEmployee(req);
         res.status(response.code).json(response.body);
     } catch (error) {
-        handleHttp(res,"ERROR_POST_updateEmployee",error);
+        handleHttp(res,"ERROR_PUT_updateEmployee",error);
     }
 }
 export const getEmployees=async(req:Request,res:Response)=>{
@@ -42,6 +42,24 @@ export const addCategory=async(req:Request,res:Response)=>{
         res.status(response.code).json(response.body);
     } catch (error) {
         handleHttp(res,"ERROR_POST_addCategory",error)
+    }
+}
+export const updateCategory=async(req:Request,res:Response)=>{
+    try {
+        const response=await updateDataCategory(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_PUT_updateCategory",error);
+    }
+    
+}
+export const getCategory=async(req:Request,res:Response)=>{
+    
+    try {
+        const response=await getDataCategory(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getEmployess",error)
     }
 }
 export const addCategorySalary=async(req:Request,res:Response)=>{

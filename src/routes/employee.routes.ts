@@ -161,6 +161,50 @@ router.get('/employee',verifyToken,employeeController.getEmployees);
 router.post('/employee/category',verifyToken,employeeController.addCategory);
 /**
  * @swagger
+ * /employee/category/{categoryId}:
+ *      put:
+ *          tags:
+ *              - employee
+ *          summary: update category by categoryId
+ *          security:
+ *              - Authorization: []
+ *          parameters:
+ *          -   name: X-Frame-Options
+ *              in: header
+ *              required: true
+ *              description: only "deny" is allowed
+ *          -   name: accept
+ *              in: header
+ *              required: true
+ *              description: only "application/json" is allowed
+ *          -   name: categoryId
+ *              in: path
+ *              required: true
+ *              description: category id
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/updateCategory'
+ *          responses:
+ *              '200':
+ *                  description: succesful
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#components/schemas/succesfulResponse'
+ *              '404':
+ *                  description: employee has already been updated
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#components/schemas/errorResponse' 
+ */
+router.put('/employee/category',verifyToken,employeeController.updateCategory);
+router.get('/employee/category',verifyToken,employeeController.getCategory)
+/**
+ * @swagger
  * /employee/category_salary:
  *      post:
  *          tags:
