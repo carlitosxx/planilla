@@ -4,7 +4,7 @@ import * as userController from '../controllers/user.controller';
 
 import {verifyToken} from '../middleware/verify_token.middleware';
 import {validationSchema} from '../middleware/validation_schema.middleware';
-
+import {signupSchema} from '../schema/signup.schema'
 
 const router = Router();
 /**
@@ -54,7 +54,7 @@ router.post('/user/signin',userController.signinUser);
  *              '400':
  *                  description: email or dni invalid
 */
-router.post('/user/signup',userController.signupUser);
+router.post('/user/signup',signupSchema,validationSchema,userController.signupUser);
 /**
  * @swagger
  * /user/profile/:userId:
