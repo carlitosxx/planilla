@@ -352,6 +352,9 @@ router.put('/employee/category_salary/:categorySalaryId',verifyToken,employeeCon
  */
 router.get('/employee/category_salary',verifyToken,employeeController.getCategorySalary)
 
+router.post('/employee/pension_system',verifyToken,employeeController.addPensionSystem)
+router.put('/employee/pension_system/:pensionSystemId',verifyToken,employeeController.updatePensionSystem);
+router.get('/employee/pension_system',verifyToken,employeeController.getPensionSystem)
 //test
 router.get('/employee',employeeController.test)
 export default router;

@@ -1,6 +1,18 @@
 import {Request,Response} from 'express';
 import {handleHttp} from "../utils/error.handle";
-import {createCategory, createEmployee,createCategorySalary, updateDataEmployee, getEmployeesByPageSize, updateDataCategory, getDataCategory, updateDataCategorySalary, getDataCategorySalary} from "../services/employee.service";
+import {
+    createCategory,
+    createEmployee,
+    createCategorySalary,
+    updateDataEmployee, 
+    getEmployeesByPageSize, 
+    updateDataCategory, 
+    getDataCategory, 
+    updateDataCategorySalary, 
+    getDataCategorySalary, 
+    createPensionSystem, 
+    updateDataPensionSystem, 
+    getDataPensionSystem} from "../services/employee.service";
 
 export const addEmployee=async(req:Request,res:Response)=>{
     try {
@@ -84,5 +96,29 @@ export const getCategorySalary=async(req:Request,res:Response)=>{
         res.status(response.code).json(response.body);
     } catch (error) {
         handleHttp(res,"ERROR_GET_getCategorySalary",error);
+    }
+}
+export const addPensionSystem=async(req:Request,res:Response)=>{
+    try {
+        const response=await createPensionSystem(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_POST_addCategorySalary",error)
+    }
+}
+export const updatePensionSystem=async(req:Request,res:Response)=>{
+    try {
+        const response=await updateDataPensionSystem(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_PUT_updatePensionSystem",error)
+    }
+}
+export const getPensionSystem=async(req:Request,res:Response)=>{
+    try {
+        const response=await getDataPensionSystem(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getPensionSystemm",error)
     }
 }

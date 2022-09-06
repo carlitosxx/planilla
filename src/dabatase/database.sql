@@ -35,6 +35,12 @@ CREATE TABLE tbl_employee(
     UNIQUE KEY `employeeDni_UNIQUE`(`employeeDni`), 
     FOREIGN KEY (categorySalaryId) REFERENCES tbl_category_salary(categorySalaryId) 
 );
+CREATE TABLE tbl_pension_system(
+  pensionSystemId INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  pensionSystemCode VARCHAR (10) NOT NULL,
+  pensionSystemDescription VARCHAR(50) NOT NULL
+);
+
 
 /*STORED PROCEDURES*/
 DELIMITER $$

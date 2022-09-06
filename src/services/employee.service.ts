@@ -62,7 +62,7 @@ export const getEmployeesByPageSize=async(req:Request)=>{
         const paginationParse = JSON.parse(JSON.stringify(queryPagination[0])); 
         const countEmployee = JSON.parse(JSON.stringify(queryCount[0]));
         return response={
-            body:{countEmployee:countEmployee[0].count,employees:paginationParse[0]},
+            body:{total:countEmployee[0].count,data:paginationParse[0]},
             code:200
         } 
     }else if (employeeId){
@@ -90,12 +90,12 @@ export const getEmployeesByPageSize=async(req:Request)=>{
         const queryEmployeesParse = JSON.parse(JSON.stringify(queryEmployee[0]));       
         if (queryEmployeesParse[0]){
         return response={
-            body:{countEmployees:1,employees:[queryEmployeesParse[0]]},
+            body:{total:1,data:[queryEmployeesParse[0]]},
             code:200
             } ;
         } else{
         return response={
-            body:{countEmployees:0,employees:[]},
+            body:{total:0,data:[]},
             code:200
             } ;
         } 
@@ -129,7 +129,7 @@ export const getEmployeesByPageSize=async(req:Request)=>{
         const queryEmployeesParse = JSON.parse(JSON.stringify(queryEmployee[0]));
         const countEmployees = JSON.parse(JSON.stringify(queryCount[0]));         
         return response={            
-            body:{countEmployees:countEmployees[0].count,categories:[...queryEmployeesParse]},
+            body:{total:countEmployees[0].count,data:[...queryEmployeesParse]},
             code:200
         } ;
     }
@@ -190,7 +190,7 @@ export const getDataCategory=async(req:Request)=>{
         const paginationParse = JSON.parse(JSON.stringify(queryPagination[0])); 
         const countCategories = JSON.parse(JSON.stringify(queryCount[0]));
         return response={
-            body:{countCategories:countCategories[0].count,categories:paginationParse[0]},
+            body:{total:countCategories[0].count,data:paginationParse[0]},
             code:200
         } 
     }else if (employeeCategoryId){
@@ -201,12 +201,12 @@ export const getDataCategory=async(req:Request)=>{
        console.log(queryCategoriesParse[0])
        if (queryCategoriesParse[0]){
         return response={
-            body:{countCategories:1,categories:[queryCategoriesParse[0]]},
+            body:{total:1,data:[queryCategoriesParse[0]]},
             code:200
         } ;
        } else{
         return response={
-            body:{countCategories:0,categories:[]},
+            body:{total:0,data:[]},
             code:200
         } ;
        } 
@@ -289,10 +289,10 @@ export const getDataCategorySalary=async(req:Request)=>{
         const queryCount=await pool.query(`
         select count(*) as count from tbl_category_salary
         `);
-        const paginationParse = JSON.parse(JSON.stringify(queryPagination[0])); 
-        const countCategories = JSON.parse(JSON.stringify(queryCount[0]));
+        const data = JSON.parse(JSON.stringify(queryPagination[0])); 
+        const total = JSON.parse(JSON.stringify(queryCount[0]));
         return response={
-            body:{countSalaries:countCategories[0].count,salaries:paginationParse[0]},
+            body:{total:total[0].count,data:data[0]},
             code:200
         } 
     }else if (categorySalaryId){
@@ -314,12 +314,12 @@ export const getDataCategorySalary=async(req:Request)=>{
         const querySalariesParse = JSON.parse(JSON.stringify(querySalaries[0]));       
         if (querySalariesParse[0]){
         return response={
-            body:{countSalaries:1,salaries:[querySalariesParse[0]]},
+            body:{total:1,data:[querySalariesParse[0]]},
             code:200
             } ;
         } else{
         return response={
-            body:{countSalaries:0,salaries:[]},
+            body:{total:0,data:[]},
             code:200
             } ;
         } 
@@ -349,4 +349,119 @@ export const getDataCategorySalary=async(req:Request)=>{
             code:200
         } ;
     }
+}
+export const createPensionSystem=async(req:Request)=>{
+    let response;
+    const {pensionSystemCode,pensionSystemDescription}=req.body;
+    const query=await pool.query(`
+    INSERT INTO tbl_pension_system( 
+        pensionSystemCode,
+        pensionSystemDescription)
+    SELECT 
+        ?,
+        ?        
+    WHERE NOT EXISTS (	SELECT * 
+                        FROM tbl_pension_system 
+                        WHERE 
+                            pensionSystemCode=? 
+                        LIMIT 1);
+    `,[pensionSystemCode,pensionSystemDescription,pensionSystemCode]);    
+    const queryParse = JSON.parse(JSON.stringify(query[0]));     
+    if (queryParse.affectedRows==0){
+       return response={
+            body:{errorNo:1062,errorMessage:"pensionSystemCode duplicate"},
+            code:403
+        }
+    }
+    response={
+        body:{msg:"system pension created"},
+        code:200
+    }  
+    return response;
+}
+export const updateDataPensionSystem=async(req:Request)=>{
+    let response;
+    const {pensionSystemId}=req.params
+    const {pensionSystemCode,pensionSystemDescription}=req.body
+    const query=await pool.query(`
+    UPDATE tbl_pension_system
+    SET
+    pensionSystemCode=?,
+    pensionSystemDescription=?              
+    WHERE
+    pensionSystemId=?;
+    `,[pensionSystemCode,pensionSystemDescription,pensionSystemId])
+    const consultaParse = JSON.parse(JSON.stringify(query[0]));
+    if (consultaParse.changedRows==1){    
+        response={
+            body:{msg:"pension system updated"},
+            code:200
+        }
+        return response;          
+    }else{     
+        response={
+            body:{errorNo:404,errorMessage:"pension system has already been updated"},
+            code:404
+        }
+        return response;  
+    }  
+}
+export const getDataPensionSystem=async(req:Request)=>{
+    let response;
+    const {page,size,pensionSystemId}=req.query
+    if(page && size){
+        const _page=(parseInt(page as string));
+        const _size=(parseInt(size as string));        
+        const _pageCalc=(_page-1)*_size; 
+        const queryPagination=await pool.query(`
+        SELECT * FROM tbl_pension_system order by pensionSystemCode limit ?,?
+        `,[_pageCalc,_size]);
+        const queryCount=await pool.query(`
+        select count(*) as count from tbl_pension_system
+        `);
+        const data = JSON.parse(JSON.stringify(queryPagination[0])); 
+        const total = JSON.parse(JSON.stringify(queryCount[0]));
+        return response={
+            body:{total:total[0].count,data:[...data]},
+            code:200
+        } 
+    }else if (pensionSystemId){
+        const query=await pool.query(`
+        SELECT 
+        *
+        FROM 
+            tbl_pension_system
+        where 
+        pensionSystemId=?
+        `,[pensionSystemId])     
+        const data = JSON.parse(JSON.stringify(query[0]));       
+        if (data[0]){
+        return response={
+            body:{total:1,data:[data[0]]},
+            code:200
+            } ;
+        } else{
+        return response={
+            body:{total:0,data:[]},
+            code:200
+            } ;
+        } 
+    }else {        
+        const queryData=await pool.query(`
+        SELECT 
+           *
+        FROM 
+	        tbl_pension_system         
+        `)
+        const queryCount= await pool.query(`
+        select count(*) as count from tbl_pension_system
+        `)
+        const data = JSON.parse(JSON.stringify(queryData[0]));
+        const total = JSON.parse(JSON.stringify(queryCount[0]));         
+        return response={            
+            body:{total:total[0].count,data:[...data]},
+            code:200
+        } ;
+    }
+    
 }
