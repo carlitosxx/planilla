@@ -3,20 +3,38 @@ import {pool} from '../database';
 
 export const createEmployee=async(req:Request)=>{
     let response;
-    const {employeeDni,employeeFullname,categorySalaryId}=req.body;
+    const {employeeDni,employeeFullname,categorySalaryId,pensionAdministratorId}=req.body;
     const query = await pool.query(`
-        INSERT INTO
-        tbl_employee(            
-            employeeDni, 
-            employeeFullname,
-            categorySalaryId,
-            employeeStatus)
-        values(?,?,?,?)
-        `,[employeeDni,employeeFullname,categorySalaryId,1])
-        response={
-            body:{msg:"employee created"},
-            code:200
+    INSERT INTO tbl_employee( 
+        employeeDni,
+        employeeFullname,
+        employeeStatus,
+        categorySalaryId,
+        pensionAdministratorId)
+    SELECT 
+        ?,
+        ?,
+        ?,
+        ?,
+        ?        
+    WHERE NOT EXISTS (	SELECT * 
+                        FROM tbl_employee
+                        WHERE 
+                        employeeDni=? 
+                        LIMIT 1);
+       
+        `,[employeeDni,employeeFullname,1,categorySalaryId,pensionAdministratorId,employeeDni])
+        const queryParse = JSON.parse(JSON.stringify(query[0]));     
+        if (queryParse.affectedRows==0){
+           return response={
+                body:{errorNo:1062,errorMessage:"employeeDni duplicate"},
+                code:403
+            }
         }
+        response={
+            body:{msg:"Employee created"},
+            code:200
+        }  
         return response;
 }
 export const updateDataEmployee=async(req:Request)=>{
@@ -49,22 +67,22 @@ export const updateDataEmployee=async(req:Request)=>{
     }       
    
 }
-export const getEmployeesByPageSize=async(req:Request)=>{
+export const getDataEmployees=async(req:Request)=>{
     let response;
     const {page,size,employeeId}=req.query
+    const queryCount=await pool.query(`
+        select count(*) as count from tbl_employee
+        `);
+    const total = JSON.parse(JSON.stringify(queryCount[0]));    
     if(page && size){
         const queryPagination=await pool.query(`
         call sp_get_employeesByPageSize(?,?)
-        `,[page,size]);
-        const queryCount=await pool.query(`
-        select count(*) as count from tbl_employee
-        `);
-        const paginationParse = JSON.parse(JSON.stringify(queryPagination[0])); 
-        const countEmployee = JSON.parse(JSON.stringify(queryCount[0]));
+        `,[page,size]);        
+        const paginationParse = JSON.parse(JSON.stringify(queryPagination[0]));        
         return response={
-            body:{total:countEmployee[0].count,data:paginationParse[0]},
+            body:{total:total[0].count,data:paginationParse[0]},
             code:200
-        } 
+            } 
     }else if (employeeId){
         const queryEmployee=await pool.query(`
         SELECT 
@@ -90,16 +108,15 @@ export const getEmployeesByPageSize=async(req:Request)=>{
         const queryEmployeesParse = JSON.parse(JSON.stringify(queryEmployee[0]));       
         if (queryEmployeesParse[0]){
         return response={
-            body:{total:1,data:[queryEmployeesParse[0]]},
+            body:{total:total[0].count,data:[queryEmployeesParse[0]]},
             code:200
-            } ;
+            };
         } else{
         return response={
-            body:{total:0,data:[]},
+            body:{total:total[0].count,data:[]},
             code:200
-            } ;
-        } 
-        
+            };
+        }         
     }
     else {        
         const queryEmployee=await pool.query(`
@@ -122,14 +139,10 @@ export const getEmployeesByPageSize=async(req:Request)=>{
         on 
             C.employeeCategoryId=B.employeeCategoryId       
         order by A.employeeFullname 
-        `)
-        const queryCount= await pool.query(`
-        select count(*) as count from tbl_employee
-        `)
+        `)   
         const queryEmployeesParse = JSON.parse(JSON.stringify(queryEmployee[0]));
-        const countEmployees = JSON.parse(JSON.stringify(queryCount[0]));         
         return response={            
-            body:{total:countEmployees[0].count,data:[...queryEmployeesParse]},
+            body:{total:total[0].count,data:[...queryEmployeesParse]},
             code:200
         } ;
     }
@@ -158,10 +171,10 @@ export const updateDataCategory=async(req:Request)=>{
     UPDATE tbl_employee_category 
     SET
         employeeCategoryDescription=?,
-        employeeCategoryShortDescription=?,              
+        employeeCategoryShortDescription=?              
     WHERE
-        categoryId=?;
-    `,[employeeCategoryDescription,employeeCategoryShortDescription,categoryId])
+        employeeCategoryId=?;
+    `,[employeeCategoryDescription,employeeCategoryShortDescription,parseInt(categoryId)])
     const consultaParse = JSON.parse(JSON.stringify(query[0]));
     if (consultaParse.changedRows==1){    
         response={
@@ -180,53 +193,47 @@ export const updateDataCategory=async(req:Request)=>{
 export const getDataCategory=async(req:Request)=>{
     let response;
     const {page,size,employeeCategoryId}=req.query
+    const queryCount=await pool.query(`
+        select count(*) as count from tbl_employee_category
+        `);
+    const total = JSON.parse(JSON.stringify(queryCount[0]));
     if(page && size){
         const queryPagination=await pool.query(`
             call sp_get_categoryByPageSize(?,?)
         `,[page,size]);
-        const queryCount=await pool.query(`
-        select count(*) as count from tbl_employee_category
-        `);
+        
         const paginationParse = JSON.parse(JSON.stringify(queryPagination[0])); 
-        const countCategories = JSON.parse(JSON.stringify(queryCount[0]));
+       
         return response={
-            body:{total:countCategories[0].count,data:paginationParse[0]},
+            body:{total:total[0].count,data:paginationParse[0]},
             code:200
         } 
     }else if (employeeCategoryId){
         const queryCategories=await pool.query(`
         select * from tbl_employee_category where employeeCategoryId=?
         `,[employeeCategoryId])     
-        const queryCategoriesParse = JSON.parse(JSON.stringify(queryCategories[0]));
-       console.log(queryCategoriesParse[0])
+        const queryCategoriesParse = JSON.parse(JSON.stringify(queryCategories[0]));       
        if (queryCategoriesParse[0]){
         return response={
-            body:{total:1,data:[queryCategoriesParse[0]]},
+            body:{total:total[0].count,data:[queryCategoriesParse[0]]},
             code:200
-        } ;
+            };
        } else{
         return response={
-            body:{total:0,data:[]},
+            body:{total:total[0].count,data:[]},
             code:200
         } ;
        } 
         
     }
-    else {
-        console.log('paso por aqui sin parametros')
+    else {        
         const queryCategories=await pool.query(`
         select * from tbl_employee_category
-        `)
-        const queryCount= await pool.query(`
-        select count(*) as count from tbl_employee_category
-        `)
-        const queryCategoriesParse = JSON.parse(JSON.stringify(queryCategories[0]));
-        const countCategories = JSON.parse(JSON.stringify(queryCount[0])); 
-        console.log(queryCategoriesParse)
-        console.log(countCategories)
+        `)        
+        const queryCategoriesParse = JSON.parse(JSON.stringify(queryCategories[0])); 
         return response={
-            // body:[...queryCategoriesParse],
-            body:{countCategories:countCategories[0].count,categories:[...queryCategoriesParse]},
+            
+            body:{total:total[0].count,data:[...queryCategoriesParse]},
             code:200
         } ;
     }
@@ -282,15 +289,16 @@ export const updateDataCategorySalary=async(req:Request)=>{
 export const getDataCategorySalary=async(req:Request)=>{
     let response;
     const {page,size,categorySalaryId}=req.query
+    const queryCount=await pool.query(`
+    select count(*) as count from tbl_category_salary
+    `);
+    const total = JSON.parse(JSON.stringify(queryCount[0]));
     if(page && size){
         const queryPagination=await pool.query(`
         call sp_get_salaryByPageSize(?,?)
-        `,[page,size]);
-        const queryCount=await pool.query(`
-        select count(*) as count from tbl_category_salary
-        `);
+        `,[page,size]);        
         const data = JSON.parse(JSON.stringify(queryPagination[0])); 
-        const total = JSON.parse(JSON.stringify(queryCount[0]));
+        
         return response={
             body:{total:total[0].count,data:data[0]},
             code:200
@@ -338,14 +346,11 @@ export const getDataCategorySalary=async(req:Request)=>{
 	        tbl_category_salary A inner join tbl_employee_category B 
         on 
             A.employeeCategoryId=B.employeeCategoryId 
-        `)
-        const queryCount= await pool.query(`
-        select count(*) as count from tbl_category_salary
-        `)
+        `)       
         const querySalariesParse = JSON.parse(JSON.stringify(querySalaries[0]));
-        const countSalaries = JSON.parse(JSON.stringify(queryCount[0]));         
+               
         return response={            
-            body:{countCategories:countSalaries[0].count,categories:[...querySalariesParse]},
+            body:{total:total[0].count,data:[...querySalariesParse]},
             code:200
         } ;
     }
@@ -464,4 +469,139 @@ export const getDataPensionSystem=async(req:Request)=>{
         } ;
     }
     
+}
+export const createPensionAdministrator=async(req:Request)=>{
+    let response;
+    const {pensionAdministratorCode,pensionAdministratorDescription,pensionSystemId}=req.body;
+    const query=await pool.query(`
+    INSERT INTO tbl_pension_administrator( 
+        pensionAdministratorCode,
+        pensionAdministratorDescription,
+        pensionSystemId)
+    SELECT 
+        ?,
+        ?,
+        ?        
+    WHERE NOT EXISTS (	SELECT * 
+                        FROM tbl_pension_administrator
+                        WHERE 
+                            pensionAdministratorCode=? 
+                        LIMIT 1);
+    `,[pensionAdministratorCode,pensionAdministratorDescription,pensionSystemId,pensionAdministratorCode]);    
+    const queryParse = JSON.parse(JSON.stringify(query[0]));     
+    if (queryParse.affectedRows==0){
+       return response={
+            body:{errorNo:1062,errorMessage:"pensionAdministratorCode duplicate"},
+            code:403
+        }
+    }
+    response={
+        body:{msg:"Pension administrator created"},
+        code:200
+    }  
+    return response;
+}
+export const updateDataPensionAdministrator=async(req:Request)=>{
+    let response;
+    const {pensionAdministratorId}=req.params
+    const {pensionAdministratorCode,pensionAdministratorDescription,pensionSystemId}=req.body
+    const query=await pool.query(`
+    UPDATE tbl_pension_administrator
+    SET
+    pensionAdministratorCode=?,
+    pensionAdministratorDescription=?,
+    pensionSystemId=?
+
+    WHERE
+    pensionAdministratorId=?;
+    `,[pensionAdministratorCode,pensionAdministratorDescription,pensionSystemId,pensionAdministratorId])
+    const consultaParse = JSON.parse(JSON.stringify(query[0]));
+    if (consultaParse.changedRows==1){    
+        response={
+            body:{msg:"pension administrator updated"},
+            code:200
+        }
+        return response;          
+    }else{     
+        response={
+            body:{errorNo:404,errorMessage:"pension administrator has already been updated"},
+            code:404
+        }
+        return response;  
+    }  
+}
+export const getDataPensionAdministrator= async(req:Request)=>{
+    let response;
+    const {page,size,pensionAdministratorId}=req.query
+    const queryCount=await pool.query(`
+    select count(*) as count from tbl_pension_administrator
+    `);
+    const total = JSON.parse(JSON.stringify(queryCount[0]));
+    if(page && size){
+        const _page=(parseInt(page as string));
+        const _size=(parseInt(size as string));        
+        const _pageCalc=(_page-1)*_size; 
+        const queryPagination=await pool.query(`
+        SELECT 
+	        A.pensionAdministratorId,
+            A.pensionAdministratorCode,
+            A.pensionAdministratorDescription,
+            B.pensionSystemId,
+            B.pensionSystemCode,
+            B.pensionSystemDescription
+        FROM tbl_pension_administrator A inner join
+            tbl_pension_system B on A.pensionSystemId=B.pensionSystemId
+        order by A.pensionAdministratorCode 
+        limit ?,?
+        `,[_pageCalc,_size]);        
+        const data = JSON.parse(JSON.stringify(queryPagination[0]));         
+        return response={
+            body:{total:total[0].count,data:[...data]},
+            code:200
+        } 
+    }else if (pensionAdministratorId){
+        const query=await pool.query(`
+        SELECT 
+	        A.pensionAdministratorId,
+            A.pensionAdministratorCode,
+            A.pensionAdministratorDescription,
+            B.pensionSystemId,
+            B.pensionSystemCode,
+            B.pensionSystemDescription
+        FROM tbl_pension_administrator A inner join
+            tbl_pension_system B on A.pensionSystemId=B.pensionSystemId
+        WHERE 
+            A.pensionAdministratorId=?
+        order by A.pensionAdministratorCode       
+        `,[pensionAdministratorId])          
+        const data = JSON.parse(JSON.stringify(query[0]));  
+        if (data[0]){
+        return response={
+            body:{total:total[0].count,data:[data[0]]},
+            code:200
+            } ;
+        } else{
+        return response={
+            body:{total:0,data:[]},
+            code:200
+            } ;
+        } 
+    }else {        
+        const queryData=await pool.query(`
+        SELECT 
+	        A.pensionAdministratorId,
+            A.pensionAdministratorCode,
+            A.pensionAdministratorDescription,
+            B.pensionSystemId,
+            B.pensionSystemCode,
+            B.pensionSystemDescription
+        FROM tbl_pension_administrator A inner join
+            tbl_pension_system B on A.pensionSystemId=B.pensionSystemId       
+        `)       
+        const data = JSON.parse(JSON.stringify(queryData[0]));              
+        return response={            
+            body:{total:total[0].count,data:[...data]},
+            code:200
+        } ;
+    }
 }

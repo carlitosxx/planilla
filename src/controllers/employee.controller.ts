@@ -5,14 +5,17 @@ import {
     createEmployee,
     createCategorySalary,
     updateDataEmployee, 
-    getEmployeesByPageSize, 
+    getDataEmployees, 
     updateDataCategory, 
     getDataCategory, 
     updateDataCategorySalary, 
     getDataCategorySalary, 
     createPensionSystem, 
     updateDataPensionSystem, 
-    getDataPensionSystem} from "../services/employee.service";
+    getDataPensionSystem,
+    createPensionAdministrator,
+    updateDataPensionAdministrator,
+    getDataPensionAdministrator} from "../services/employee.service";
 
 export const addEmployee=async(req:Request,res:Response)=>{
     try {
@@ -32,7 +35,7 @@ export const updateEmployee=async(req:Request,res:Response)=>{
 }
 export const getEmployees=async(req:Request,res:Response)=>{
     try {
-        const response= await getEmployeesByPageSize(req);
+        const response= await getDataEmployees(req);
         res.status(response.code).json(response.body);
         
     } catch (error) {
@@ -120,5 +123,29 @@ export const getPensionSystem=async(req:Request,res:Response)=>{
         res.status(response.code).json(response.body);
     } catch (error) {
         handleHttp(res,"ERROR_GET_getPensionSystemm",error)
+    }
+}
+export const addPensionAdministrator=async(req:Request,res:Response)=>{
+    try {
+        const response=await createPensionAdministrator(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_POST_addpensionAdministrator",error)
+    }
+}
+export const updatePensionAdministrator= async(req:Request,res:Response)=>{
+    try {
+        const response=await updateDataPensionAdministrator(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_PUT_updatePensionAdministrator",error)
+    }
+}
+export const getPensionAdministrator= async(req:Request,res:Response)=>{
+    try {
+        const response=await getDataPensionAdministrator(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getPensionAdministrator",error)
     }
 }

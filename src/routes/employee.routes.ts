@@ -350,13 +350,18 @@ router.put('/employee/category_salary/:categorySalaryId',verifyToken,employeeCon
  *                          schema:
  *                              $ref: '#components/schemas/getCategorySalaryResponse'
  */
-router.get('/employee/category_salary',verifyToken,employeeController.getCategorySalary)
+router.get('/employee/category_salary',verifyToken,employeeController.getCategorySalary);
 
 //TODO: SISTEMA DE PENSION
-router.post('/employee/pension_system',verifyToken,employeeController.addPensionSystem)
+router.post('/employee/pension_system',verifyToken,employeeController.addPensionSystem);
 router.put('/employee/pension_system/:pensionSystemId',verifyToken,employeeController.updatePensionSystem);
-router.get('/employee/pension_system',verifyToken,employeeController.getPensionSystem)
-//TODO: 
+router.get('/employee/pension_system',verifyToken,employeeController.getPensionSystem);
+//TODO: ADMINISTRADOR DE PENSION
+router.post('/employee/pension_administrator',verifyToken,employeeController.addPensionAdministrator);
+router.put('/employee/pension_administrator/:pensionAdministratorId',verifyToken,employeeController.updatePensionAdministrator);
+router.get('/employee/pension_administrator',verifyToken,employeeController.getPensionAdministrator);
+
+
 //test
 router.get('/employee',employeeController.test)
 export default router;
