@@ -97,10 +97,10 @@ router.put('/employee/:employeeId',verifyToken,employeeController.updateEmployee
  *          parameters:
  *          -   name: page
  *              in: query
- *              required: true
  *          -   name: size
  *              in: query
- *              required: true
+ *          -   name: employeeId
+ *              in: query
  *          -   name: X-Frame-Options
  *              in: header
  *              required: true
@@ -201,7 +201,39 @@ router.post('/employee/category',verifyToken,employeeController.addCategory);
  *                          schema:
  *                              $ref: '#components/schemas/errorResponse' 
  */
-router.put('/employee/category',verifyToken,employeeController.updateCategory);
+router.put('/employee/category/:categoryId',verifyToken,employeeController.updateCategory);
+/**
+ * @swagger
+ * /employee/category:
+ *      get:
+ *          tags:
+ *              - employee
+ *          summary: get category by page and size or employeeCategoryId 
+ *          security:
+ *              - Authorization: []
+ *          parameters:
+ *          -   name: page
+ *              in: query
+ *          -   name: size
+ *              in: query
+ *          -   name: employeeCategoryId
+ *              in: query
+ *          -   name: X-Frame-Options
+ *              in: header
+ *              required: true
+ *              description: only "deny" is allowed
+ *          -   name: Accept
+ *              in: header
+ *              required: true
+ *              description: only "application/json" is allowed *         
+ *          responses:
+ *              '200':
+ *                  description: succesful
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#components/schemas/getEmployeesResponse'
+ */
 router.get('/employee/category',verifyToken,employeeController.getCategory)
 /**
  * @swagger
@@ -243,6 +275,82 @@ router.get('/employee/category',verifyToken,employeeController.getCategory)
  * 
  */
 router.post('/employee/category_salary',verifyToken,employeeController.addCategorySalary);
+/**
+ * @swagger
+ * /employee/category_salary/{categorySalaryId}:
+ *      put:
+ *          tags:
+ *              - employee
+ *          summary: update salary by categorySalaryId
+ *          security:
+ *              - Authorization: []
+ *          parameters:
+ *          -   name: X-Frame-Options
+ *              in: header
+ *              required: true
+ *              description: only "deny" is allowed
+ *          -   name: accept
+ *              in: header
+ *              required: true
+ *              description: only "application/json" is allowed
+ *          -   name: categorySalaryId
+ *              in: path
+ *              required: true
+ *              description: category salary id
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/updateCategorySalary'
+ *          responses:
+ *              '200':
+ *                  description: succesful
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#components/schemas/succesfulResponse'
+ *              '404':
+ *                  description: employee has already been updated
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#components/schemas/errorResponse'
+ */
+router.put('/employee/category_salary/:categorySalaryId',verifyToken,employeeController.updateCategorySalary);
+/**
+ * @swagger
+ * /employee/category_salary:
+ *      get:
+ *          tags:
+ *              - employee
+ *          summary: get salary by page and size or categorySalaryId
+ *          security:
+ *              - Authorization: []
+ *          parameters:
+ *          -   name: page
+ *              in: query
+ *          -   name: size
+ *              in: query
+ *          -   name: categorySalaryId
+ *              in: query
+ *          -   name: X-Frame-Options
+ *              in: header
+ *              required: true
+ *              description: only "deny" is allowed
+ *          -   name: Accept
+ *              in: header
+ *              required: true
+ *              description: only "application/json" is allowed *         
+ *          responses:
+ *              '200':
+ *                  description: succesful
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#components/schemas/getCategorySalaryResponse'
+ */
+router.get('/employee/category_salary',verifyToken,employeeController.getCategorySalary)
 
 //test
 router.get('/employee',employeeController.test)

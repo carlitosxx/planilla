@@ -117,6 +117,17 @@ const swaggerDefinition={
                 }
 
             },
+            getCategoryResponse:{
+                type:"object",
+                properties:{
+                    countCategories:{
+                        type:"integer"
+                    },
+                    categories:{
+                        type:"array"
+                    }
+                }
+            },
             succesfulResponse:{
                 type:"object",
                 properties:{
@@ -147,6 +158,54 @@ const swaggerDefinition={
                     },
                     employeeCategoryId:{
                         type:"integer"
+                    }
+                }
+            },
+            updateCategorySalary:{
+                type:"object",
+                properties:{
+                    categorySalarySalary:{
+                        type:"number"
+                    },
+                    categorySalaryYear:{
+                        type:"integer"
+                    },
+                    employeeCategoryId:{
+                        type:"integer"
+                    }
+                }
+            },
+            getCategorySalaryResponse:{
+                type:"object",
+                properties:{
+                    countSalaries:{
+                        type:"integer"
+                    },
+                    salaries:{
+                        type:"array",
+                        items:{
+                            type:"object",
+                            properties:{
+                                categorySalaryId:{
+                                    type:"integer",
+                                },
+                                categorySalarySalary:{
+                                    type:"number"
+                                },
+                                categorySalaryYear:{
+                                    type:"integer"
+                                },
+                                employeeCategoryId:{
+                                    type:"integer"
+                                },
+                                employeeCategoryDescription:{
+                                    type:"string"
+                                },
+                                employeeCategoryShortDescription:{
+                                    type:"string"
+                                }
+                            }
+                        }
                     }
                 }
             },

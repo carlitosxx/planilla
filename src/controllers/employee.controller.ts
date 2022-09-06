@@ -1,6 +1,6 @@
 import {Request,Response} from 'express';
 import {handleHttp} from "../utils/error.handle";
-import {createCategory, createEmployee,createCategorySalary, updateDataEmployee, getEmployeesByPageSize, updateDataCategory, getDataCategory} from "../services/employee.service";
+import {createCategory, createEmployee,createCategorySalary, updateDataEmployee, getEmployeesByPageSize, updateDataCategory, getDataCategory, updateDataCategorySalary, getDataCategorySalary} from "../services/employee.service";
 
 export const addEmployee=async(req:Request,res:Response)=>{
     try {
@@ -68,5 +68,21 @@ export const addCategorySalary=async(req:Request,res:Response)=>{
         res.status(response.code).json(response.body);
     } catch (error) {
         handleHttp(res,"ERROR_POST_addCategorySalary",error)
+    }
+}
+export const updateCategorySalary=async (req:Request,res:Response)=>{
+    try {
+        const response=await updateDataCategorySalary(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_PUT_updateCategorySalary",error);
+    }
+}
+export const getCategorySalary=async(req:Request,res:Response)=>{
+    try {
+        const response=await getDataCategorySalary(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getCategorySalary",error);
     }
 }

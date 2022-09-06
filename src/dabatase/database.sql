@@ -16,13 +16,15 @@ CREATE TABLE tbl_employee_category(
     employeeCategoryId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     employeeCategoryDescription VARCHAR(100) NOT NULL,
     employeeCategoryShortDescription VARCHAR(10) NOT NULL,
-    UNIQUE KEY `employeeCategoryShortDescription_UNIQUE`(`employeeCategoryShortDescription`)
+    UNIQUE KEY `employeeCategoryShortDescription_UNIQUE`(`employeeCategoryShortDescription`),
+    
 );
 CREATE TABLE tbl_category_salary(
     categorySalaryId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     categorySalarySalary DECIMAL(10,2) NOT NULL,
     categorySalaryYear  INT NOT NULL,
-    employeeCategoryId INT NOT NULL    
+    employeeCategoryId INT NOT NULL,
+    FOREIGN KEY (employeeCategoryId) REFERENCES tbl_employee_category(employeeCategoryId)     
 );
 CREATE TABLE tbl_employee(
     employeeId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -55,19 +57,65 @@ WHERE NOT EXISTS (	SELECT *
 END$$
 DELIMITER ;
 
-USE `planilla`;
-DROP procedure IF EXISTS `planilla`.`sp_get_emplyeesByPageSize_SYNTAX_ERROR`;
-;
-
 DELIMITER $$
 USE `planilla`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_emplyeesByPageSize`(in Ppage int, in Psize int)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_employeesByPageSize`(in Ppage int, in Psize int)
 BEGIN
 	SET @pag= (Ppage-1)*Psize;    
-	SET @qry_string=concat("SELECT * FROM tbl_employee order by employeeFullname limit ",@pag,",",Psize);
+		SET @qry_string=concat("
+SELECT 
+	A.employeeId,
+	A.employeeDni,
+	A.employeeFullname,
+    A.employeeStatus,
+	B.categorySalaryId,
+	B.categorySalarySalary,
+    B.categorySalaryYear,
+    C.employeeCategoryId,
+    C.employeeCategoryDescription,
+    C.employeeCategoryShortDescription
+FROM 
+	tbl_employee A inner join tbl_category_salary B 
+on 
+	A.categorySalaryId=B.categorySalaryId
+inner join tbl_employee_category C
+on 
+	C.employeeCategoryId=B.employeeCategoryId
+order by A.employeeFullname limit ",@pag,",",Psize);
 	prepare qry from @qry_string;
 	execute qry;
 END$$
 
 DELIMITER ;
-;
+
+DELIMITER $$
+CREATE PROCEDURE `sp_get_categoryByPageSize`(in Ppage int, in Psize int)
+BEGIN
+	SET @pag= (Ppage-1)*Psize;    
+	SET @qry_string=concat("SELECT * FROM tbl_employee_category order by employeeCategoryShortDescription limit ",@pag,",",Psize);
+	prepare qry from @qry_string;
+	execute qry;
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE `sp_get_salaryByPageSize`(in Ppage int, in Psize int)
+BEGIN
+	SET @pag= (Ppage-1)*Psize;    
+	SET @qry_string=concat("SELECT 
+	A.categorySalaryId,
+	A.categorySalarySalary,
+	A.categorySalaryYear,
+    B.employeeCategoryId,
+	B.employeeCategoryDescription,
+	B.employeeCategoryShortDescription	 
+FROM 
+	tbl_category_salary A inner join tbl_employee_category B 
+on A.employeeCategoryId=B.employeeCategoryId 
+order by categorySalaryYear desc limit ",@pag,",",Psize);
+	prepare qry from @qry_string;
+	execute qry;
+END$$
+
+DELIMITER ;
