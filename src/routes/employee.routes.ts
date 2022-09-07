@@ -360,7 +360,10 @@ router.get('/employee/pension_system',verifyToken,employeeController.getPensionS
 router.post('/employee/pension_administrator',verifyToken,employeeController.addPensionAdministrator);
 router.put('/employee/pension_administrator/:pensionAdministratorId',verifyToken,employeeController.updatePensionAdministrator);
 router.get('/employee/pension_administrator',verifyToken,employeeController.getPensionAdministrator);
-
+//TODO: TIPO DE TRABAJADOR
+router.post('/employee/type_employee',verifyToken,employeeController.addTypeEmployee)
+router.get('/employee/type_employee',verifyToken,employeeController.getTypeEmployee)
+router.put('/employee/type_employee/:typeEmployeId',verifyToken,employeeController.updateTypeEmployee)
 
 //test
 router.get('/employee',employeeController.test)

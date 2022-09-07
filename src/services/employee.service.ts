@@ -3,15 +3,17 @@ import {pool} from '../database';
 
 export const createEmployee=async(req:Request)=>{
     let response;
-    const {employeeDni,employeeFullname,categorySalaryId,pensionAdministratorId}=req.body;
+    const {employeeDni,employeeFullname,categorySalaryId,pensionAdministratorId,typeEmployeeId}=req.body;
     const query = await pool.query(`
     INSERT INTO tbl_employee( 
         employeeDni,
         employeeFullname,
-        employeeStatus,
+        employeeStatus,        
         categorySalaryId,
-        pensionAdministratorId)
+        pensionAdministratorId,
+        typeEmployeeId)
     SELECT 
+        ?,
         ?,
         ?,
         ?,
@@ -23,7 +25,7 @@ export const createEmployee=async(req:Request)=>{
                         employeeDni=? 
                         LIMIT 1);
        
-        `,[employeeDni,employeeFullname,1,categorySalaryId,pensionAdministratorId,employeeDni])
+        `,[employeeDni,employeeFullname,1,categorySalaryId,pensionAdministratorId,typeEmployeeId,employeeDni])
         const queryParse = JSON.parse(JSON.stringify(query[0]));     
         if (queryParse.affectedRows==0){
            return response={
@@ -40,17 +42,18 @@ export const createEmployee=async(req:Request)=>{
 export const updateDataEmployee=async(req:Request)=>{
     let response;
     const {employeeId}=req.params
-    const {employeeDni,employeeFullname,employeeStatus,categorySalaryId}=req.body;
+    const {employeeDni,employeeFullname,employeeStatus,categorySalaryId,typeEmployeeId}=req.body;
     const query=await pool.query(`
     UPDATE tbl_employee 
     SET
         employeeDni=?,
         employeeFullname=?,
         employeeStatus=?,
-        categorySalaryId=?        
+        categorySalaryId=?,
+        typeEmployeeId        
     WHERE
         employeeId=?;
-    `,[employeeDni,employeeFullname,employeeStatus,categorySalaryId,employeeId])
+    `,[employeeDni,employeeFullname,employeeStatus,categorySalaryId,typeEmployeeId,employeeId])
     const consultaParse = JSON.parse(JSON.stringify(query[0]));
     if (consultaParse.changedRows==1){    
         response={
@@ -75,9 +78,35 @@ export const getDataEmployees=async(req:Request)=>{
         `);
     const total = JSON.parse(JSON.stringify(queryCount[0]));    
     if(page && size){
+        const _page=(parseInt(page as string));
+        const _size=(parseInt(size as string));        
+        const _pageCalc=(_page-1)*_size; 
         const queryPagination=await pool.query(`
-        call sp_get_employeesByPageSize(?,?)
-        `,[page,size]);        
+        SELECT 
+            A.employeeId,
+            A.employeeDni,
+            A.employeeFullname,
+            A.employeeStatus,
+            B.categorySalaryId,
+            B.categorySalarySalary,
+            B.categorySalaryYear,
+            C.employeeCategoryId,
+            C.employeeCategoryDescription,
+            C.employeeCategoryShortDescription,
+            D.typeEmployeeId,
+            D.typeEmployeeDescription
+        FROM 
+            tbl_employee A inner join tbl_category_salary B 
+        on 
+            A.categorySalaryId=B.categorySalaryId
+        inner join tbl_employee_category C
+        on 
+            C.employeeCategoryId=B.employeeCategoryId
+        inner join tbl_type_employee D
+        on  A.typeEmployeeId=D.typeEmployeeId
+        order by A.employeeFullname asc
+        limit ?,?
+        `,[_pageCalc,_size]);        
         const paginationParse = JSON.parse(JSON.stringify(queryPagination[0]));        
         return response={
             body:{total:total[0].count,data:paginationParse[0]},
@@ -95,7 +124,9 @@ export const getDataEmployees=async(req:Request)=>{
             B.categorySalaryYear,
             C.employeeCategoryId,
             C.employeeCategoryDescription,
-            C.employeeCategoryShortDescription
+            C.employeeCategoryShortDescription,
+            D.typeEmployeeId,
+            D.typeEmployeeDescription
         FROM 
             tbl_employee A inner join tbl_category_salary B 
         on 
@@ -103,6 +134,8 @@ export const getDataEmployees=async(req:Request)=>{
         inner join tbl_employee_category C
         on 
             C.employeeCategoryId=B.employeeCategoryId
+        inner join tbl_type_employee D
+        on  A.typeEmployeeId=D.typeEmployeeId    
         where A.employeeId=?
         `,[employeeId])     
         const queryEmployeesParse = JSON.parse(JSON.stringify(queryEmployee[0]));       
@@ -130,14 +163,19 @@ export const getDataEmployees=async(req:Request)=>{
             B.categorySalaryYear,
             C.employeeCategoryId,
             C.employeeCategoryDescription,
-            C.employeeCategoryShortDescription
+            C.employeeCategoryShortDescription,
+            D.typeEmployeeId,
+            D.typeEmployeeDescription
         FROM 
             tbl_employee A inner join tbl_category_salary B 
         on 
             A.categorySalaryId=B.categorySalaryId
         inner join tbl_employee_category C
         on 
-            C.employeeCategoryId=B.employeeCategoryId       
+            C.employeeCategoryId=B.employeeCategoryId
+        inner join tbl_type_employee D
+        on  
+            A.typeEmployeeId=D.typeEmployeeId             
         order by A.employeeFullname 
         `)   
         const queryEmployeesParse = JSON.parse(JSON.stringify(queryEmployee[0]));
@@ -597,6 +635,122 @@ export const getDataPensionAdministrator= async(req:Request)=>{
             B.pensionSystemDescription
         FROM tbl_pension_administrator A inner join
             tbl_pension_system B on A.pensionSystemId=B.pensionSystemId       
+        `)       
+        const data = JSON.parse(JSON.stringify(queryData[0]));              
+        return response={            
+            body:{total:total[0].count,data:[...data]},
+            code:200
+        } ;
+    }
+}
+export const createTypeEmployee=async (req:Request)=>{
+    let response;
+    const {typeEmployeeCode,typeEmployeeDescription}=req.body;
+    const query=await pool.query(`
+    INSERT INTO tbl_type_employee(         
+        typeEmployeeDescription)
+    SELECT                 
+        ?        
+    WHERE NOT EXISTS (	SELECT * 
+                        FROM tbl_type_employee
+                        WHERE 
+                            typeEmployeeDescription=? 
+                        LIMIT 1);
+    `,[typeEmployeeDescription,typeEmployeeDescription]);    
+    const queryParse = JSON.parse(JSON.stringify(query[0]));     
+    if (queryParse.affectedRows==0){
+       return response={
+            body:{errorNo:1062,errorMessage:"typeEmployeeDescription duplicate"},
+            code:403
+        }
+    }
+    response={
+        body:{msg:"type of employee created"},
+        code:200
+    }  
+    return response;
+}
+export const updateDataTypeEmployee= async(req:Request)=>{
+    let response;
+    const {typeEmployeeId}=req.params
+    const {typeEmployeeDescription}=req.body
+    const query=await pool.query(`
+    UPDATE 
+        tbl_type_employee
+    SET    
+        typeEmployeeDescription=?,    
+    WHERE
+        typeEmployeeId=?;
+    `,[typeEmployeeDescription,typeEmployeeId])
+    const consultaParse = JSON.parse(JSON.stringify(query[0]));
+    if (consultaParse.changedRows==1){    
+        response={
+            body:{msg:"Type of employee updated"},
+            code:200
+        }
+        return response;          
+    }else{     
+        response={
+            body:{errorNo:404,errorMessage:"Type of employee has already been updated"},
+            code:404
+        }
+        return response;  
+    }  
+}
+export const getDataTypeEmployee=async(req:Request)=>{
+    let response;
+    const {page,size,typeEmployeeId}=req.query
+    const queryCount=await pool.query(`
+    select count(*) as count from tbl_type_employee
+    `);
+    const total = JSON.parse(JSON.stringify(queryCount[0]));
+    if(page && size){
+        const _page=(parseInt(page as string));
+        const _size=(parseInt(size as string));        
+        const _pageCalc=(_page-1)*_size; 
+        const queryPagination=await pool.query(`
+        SELECT
+            typeEmployeeId,             
+            typeEmployeeDescription
+        FROM 
+            tbl_type_employee
+        order by typeEmployeeDescription
+        limit ?,?
+        `,[_pageCalc,_size]);        
+        const data = JSON.parse(JSON.stringify(queryPagination[0]));         
+        return response={
+            body:{total:total[0].count,data:[...data]},
+            code:200
+        } 
+    }else if (typeEmployeeId){
+        const query=await pool.query(`
+        SELECT
+            typeEmployeeId,             
+            typeEmployeeDescription        
+        FROM tbl_type_employee
+        WHERE 
+            typeEmployeeId=?
+        order by typeEmployeeDescription       
+        `,[typeEmployeeId])          
+        const data = JSON.parse(JSON.stringify(query[0]));  
+        if (data[0]){
+        return response={
+            body:{total:total[0].count,data:[data[0]]},
+            code:200
+            } ;
+        } else{
+        return response={
+            body:{total:0,data:[]},
+            code:200
+            } ;
+        } 
+    }else {        
+        const queryData=await pool.query(`
+        SELECT
+            typeEmployeeId,             
+            typeEmployeeDescription   
+        FROM 
+            tbl_type_employee     
         `)       
         const data = JSON.parse(JSON.stringify(queryData[0]));              
         return response={            

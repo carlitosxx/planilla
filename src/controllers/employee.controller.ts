@@ -15,7 +15,10 @@ import {
     getDataPensionSystem,
     createPensionAdministrator,
     updateDataPensionAdministrator,
-    getDataPensionAdministrator} from "../services/employee.service";
+    getDataPensionAdministrator,
+    createTypeEmployee,
+    getDataTypeEmployee,
+    updateDataTypeEmployee} from "../services/employee.service";
 
 export const addEmployee=async(req:Request,res:Response)=>{
     try {
@@ -147,5 +150,29 @@ export const getPensionAdministrator= async(req:Request,res:Response)=>{
         res.status(response.code).json(response.body);
     } catch (error) {
         handleHttp(res,"ERROR_GET_getPensionAdministrator",error)
+    }
+}
+export const addTypeEmployee=async(req:Request,res:Response)=>{
+    try {
+        const response=await createTypeEmployee(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_POST_addTypeEmployee",error)
+    }
+}
+export const updateTypeEmployee=async(req:Request,res:Response)=>{
+    try {
+        const response=await updateDataTypeEmployee(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_PUT_updateTypeEmployee",error)
+    }
+}
+export const getTypeEmployee=async(req:Request,res:Response)=>{
+    try {
+        const response=await getDataTypeEmployee(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getTypeEmployee",error)
     }
 }
