@@ -72,7 +72,7 @@ export const updateDataEmployee=async(req:Request)=>{
 }
 export const getDataEmployees=async(req:Request)=>{
     let response;
-    const {page,size,employeeId}=req.query
+    const {page,size,employeeId,innerjoins}=req.query
     const queryCount=await pool.query(`
         select count(*) as count from tbl_employee
         `);
@@ -87,29 +87,63 @@ export const getDataEmployees=async(req:Request)=>{
             A.employeeDni,
             A.employeeFullname,
             A.employeeStatus,
-            B.categorySalaryId,
+            A.categorySalaryId,
             B.categorySalarySalary,
             B.categorySalaryYear,
             C.employeeCategoryId,
             C.employeeCategoryDescription,
-            C.employeeCategoryShortDescription,
+            C.employeeCategoryShortDescription,    
             D.typeEmployeeId,
-            D.typeEmployeeDescription
+            D.typeEmployeeDescription,
+            A.pensionAdministratorId,
+            E.pensionAdministratorCode,
+            E.pensionAdministratorDescription
         FROM 
-            tbl_employee A inner join tbl_category_salary B 
+            tbl_employee A inner join tbl_categorySalary B 
         on 
             A.categorySalaryId=B.categorySalaryId
-        inner join tbl_employee_category C
+        inner join tbl_employeeCategory C
         on 
             C.employeeCategoryId=B.employeeCategoryId
         inner join tbl_type_employee D
         on  A.typeEmployeeId=D.typeEmployeeId
+        inner join tbl_pensionAdministrator E
+        on  E.pensionAdministratorId=A.pensionAdministratorId
         order by A.employeeFullname asc
         limit ?,?
-        `,[_pageCalc,_size]);        
-        const paginationParse = JSON.parse(JSON.stringify(queryPagination[0]));        
+        `,[_pageCalc,_size]);                
+        const paginationParse = JSON.parse(JSON.stringify(queryPagination[0]));
+        const data =paginationParse.map((element:any)=>{
+            let body={
+                employeeId:element.employeeId,
+                employeeDni:element.employeeDni,
+                employeeFullname:element.employeeFullname,
+                employeeStatus:element.employeeStatus,
+                categorySalary:{
+                    categorySalaryId:element.categorySalaryId,
+                    categorySalarySalary:element.categorySalarySalary,
+                    categorySalaryYear:element.categorySalaryYear,
+                    employeeCategory:{
+                        employeeCategoryId:element.employeeCategoryId,
+                        employeeCategoryDescription:element.employeeCategoryDescription,
+                        employeeCategoryShortDescription:element.employeeCategoryShortDescription,
+                    }
+                },
+                typeEmployee:{
+                    typeEmployeeId:element.typeEmployeeId,
+                    typeEmployeeDescription:element.typeEmployeeDescription
+                },
+                pensionAdministrator:{
+                    pensionAdministratorId:element.pensionAdministratorId,
+                    pensionAdministratorCode:element.pensionAdministratorCode,
+                    pensionAdministratorDescription:element.pensionAdministratorDescription
+                }
+            }
+            return body;
+        })
+        
         return response={
-            body:{total:total[0].count,data:paginationParse[0]},
+            body:{total:total[0].count,data},
             code:200
             } 
     }else if (employeeId){
@@ -128,10 +162,10 @@ export const getDataEmployees=async(req:Request)=>{
             D.typeEmployeeId,
             D.typeEmployeeDescription
         FROM 
-            tbl_employee A inner join tbl_category_salary B 
+            tbl_employee A inner join tbl_categorySalary B 
         on 
             A.categorySalaryId=B.categorySalaryId
-        inner join tbl_employee_category C
+        inner join tbl_employeeCategory C
         on 
             C.employeeCategoryId=B.employeeCategoryId
         inner join tbl_type_employee D
@@ -150,37 +184,79 @@ export const getDataEmployees=async(req:Request)=>{
             code:200
             };
         }         
-    }
-    else {        
-        const queryEmployee=await pool.query(`
-        SELECT 
-            A.employeeId,
-            A.employeeDni,
-            A.employeeFullname,
-            A.employeeStatus,
-            B.categorySalaryId,
-            B.categorySalarySalary,
-            B.categorySalaryYear,
-            C.employeeCategoryId,
-            C.employeeCategoryDescription,
-            C.employeeCategoryShortDescription,
-            D.typeEmployeeId,
-            D.typeEmployeeDescription
-        FROM 
-            tbl_employee A inner join tbl_category_salary B 
-        on 
-            A.categorySalaryId=B.categorySalaryId
-        inner join tbl_employee_category C
-        on 
-            C.employeeCategoryId=B.employeeCategoryId
-        inner join tbl_type_employee D
-        on  
-            A.typeEmployeeId=D.typeEmployeeId             
-        order by A.employeeFullname 
-        `)   
-        const queryEmployeesParse = JSON.parse(JSON.stringify(queryEmployee[0]));
+    }else if(innerjoins){
+        const _innerjoins:string=innerjoins as string        
+        const arrayJoins =_innerjoins.split('|');
+        console.log(arrayJoins[0]);
+        const queryBase=`SELECT * FROM tbl_employee `
+        let chain:string='';
+        const innerjoin=arrayJoins.map((element)=>{           
+           chain=chain.concat(`
+            inner join  tbl_`+element+`   
+            on 
+        	tbl_employee.`+element+`Id=tbl_`+element+`.`+element+`Id
+            `)    
+        return chain
+        })
+        const queryString=queryBase+chain+';';
+        const query= await pool.query(queryString);
+        const queryParse = JSON.parse(JSON.stringify(query[0]));
+        // data    
         return response={            
-            body:{total:total[0].count,data:[...queryEmployeesParse]},
+            body:{total:total[0].count,data:queryParse},
+            code:200
+        } ;
+    }else {        
+        const query=await pool.query(`
+        SELECT 
+        *
+        FROM 
+        	tbl_employee  
+        inner join tbl_categorySalary  
+        on 
+        	tbl_employee.categorySalaryId=tbl_categorySalary.categorySalaryId
+        inner join tbl_employeeCategory 
+        on 
+        	tbl_employeeCategory.employeeCategoryId=tbl_categorySalary.employeeCategoryId
+        inner join tbl_type_employee
+        on 
+        	tbl_employee.typeEmployeeId=tbl_type_employee.typeEmployeeId
+        inner join tbl_pensionAdministrator
+        on
+        	tbl_pensionAdministrator.pensionAdministratorId=tbl_employee.pensionAdministratorId
+        order by tbl_employee.employeeFullname asc;
+        `)   
+        const queryParse = JSON.parse(JSON.stringify(query[0]));
+        const data =queryParse.map((element:any)=>{
+            let body={
+                employeeId:element.employeeId,
+                employeeDni:element.employeeDni,
+                employeeFullname:element.employeeFullname,
+                employeeStatus:element.employeeStatus,
+                categorySalary:{
+                    categorySalaryId:element.categorySalaryId,
+                    categorySalarySalary:element.categorySalarySalary,
+                    categorySalaryYear:element.categorySalaryYear,
+                    employeeCategory:{
+                        employeeCategoryId:element.employeeCategoryId,
+                        employeeCategoryDescription:element.employeeCategoryDescription,
+                        employeeCategoryShortDescription:element.employeeCategoryShortDescription,
+                    }
+                },
+                typeEmployee:{
+                    typeEmployeeId:element.typeEmployeeId,
+                    typeEmployeeDescription:element.typeEmployeeDescription
+                },
+                pensionAdministrator:{
+                    pensionAdministratorId:element.pensionAdministratorId,
+                    pensionAdministratorCode:element.pensionAdministratorCode,
+                    pensionAdministratorDescription:element.pensionAdministratorDescription
+                }
+            }
+            return body;
+        })
+        return response={            
+            body:{total:total[0].count,data},
             code:200
         } ;
     }
@@ -190,7 +266,7 @@ export const createCategory=async(req:Request)=>{
     const {employeeCategoryDescription,employeeCategoryShortDescription}=req.body;
     const query= await pool.query(`
         INSERT INTO
-        tbl_employee_category(            
+        tbl_employeeCategory(            
             employeeCategoryDescription,
             employeeCategoryShortDescription)
         VALUES(?,?)
@@ -206,7 +282,7 @@ export const updateDataCategory=async(req:Request)=>{
     const {categoryId}=req.params
     const {employeeCategoryDescription,employeeCategoryShortDescription}=req.body
     const query=await pool.query(`
-    UPDATE tbl_employee_category 
+    UPDATE tbl_employeeCategory 
     SET
         employeeCategoryDescription=?,
         employeeCategoryShortDescription=?              
@@ -232,7 +308,7 @@ export const getDataCategory=async(req:Request)=>{
     let response;
     const {page,size,employeeCategoryId}=req.query
     const queryCount=await pool.query(`
-        select count(*) as count from tbl_employee_category
+        select count(*) as count from tbl_employeeCategory
         `);
     const total = JSON.parse(JSON.stringify(queryCount[0]));
     if(page && size){
@@ -248,7 +324,7 @@ export const getDataCategory=async(req:Request)=>{
         } 
     }else if (employeeCategoryId){
         const queryCategories=await pool.query(`
-        select * from tbl_employee_category where employeeCategoryId=?
+        select * from tbl_employeeCategory where employeeCategoryId=?
         `,[employeeCategoryId])     
         const queryCategoriesParse = JSON.parse(JSON.stringify(queryCategories[0]));       
        if (queryCategoriesParse[0]){
@@ -266,7 +342,7 @@ export const getDataCategory=async(req:Request)=>{
     }
     else {        
         const queryCategories=await pool.query(`
-        select * from tbl_employee_category
+        select * from tbl_employeeCategory
         `)        
         const queryCategoriesParse = JSON.parse(JSON.stringify(queryCategories[0])); 
         return response={
@@ -301,7 +377,7 @@ export const updateDataCategorySalary=async(req:Request)=>{
     const {categorySalaryId}=req.params
     const {categorySalarySalary,categorySalaryYear,employeeCategoryId}=req.body
     const query=await pool.query(`
-    UPDATE tbl_category_salary 
+    UPDATE tbl_categorySalary 
     SET
     categorySalarySalary=?,
     categorySalaryYear=?,
@@ -328,7 +404,7 @@ export const getDataCategorySalary=async(req:Request)=>{
     let response;
     const {page,size,categorySalaryId}=req.query
     const queryCount=await pool.query(`
-    select count(*) as count from tbl_category_salary
+    select count(*) as count from tbl_categorySalary
     `);
     const total = JSON.parse(JSON.stringify(queryCount[0]));
     if(page && size){
@@ -351,7 +427,7 @@ export const getDataCategorySalary=async(req:Request)=>{
             B.employeeCategoryDescription,
             B.employeeCategoryShortDescription	 
         FROM 
-	        tbl_category_salary A inner join tbl_employee_category B 
+	        tbl_categorySalary A inner join tbl_employeeCategory B 
         on 
             A.employeeCategoryId=B.employeeCategoryId 
         where 
@@ -381,7 +457,7 @@ export const getDataCategorySalary=async(req:Request)=>{
             B.employeeCategoryDescription,
             B.employeeCategoryShortDescription	 
         FROM 
-	        tbl_category_salary A inner join tbl_employee_category B 
+	        tbl_categorySalary A inner join tbl_employeeCategory B 
         on 
             A.employeeCategoryId=B.employeeCategoryId 
         `)       
@@ -397,14 +473,14 @@ export const createPensionSystem=async(req:Request)=>{
     let response;
     const {pensionSystemCode,pensionSystemDescription}=req.body;
     const query=await pool.query(`
-    INSERT INTO tbl_pension_system( 
+    INSERT INTO tbl_pensionSystem( 
         pensionSystemCode,
         pensionSystemDescription)
     SELECT 
         ?,
         ?        
     WHERE NOT EXISTS (	SELECT * 
-                        FROM tbl_pension_system 
+                        FROM tbl_pensionSystem 
                         WHERE 
                             pensionSystemCode=? 
                         LIMIT 1);
@@ -427,7 +503,7 @@ export const updateDataPensionSystem=async(req:Request)=>{
     const {pensionSystemId}=req.params
     const {pensionSystemCode,pensionSystemDescription}=req.body
     const query=await pool.query(`
-    UPDATE tbl_pension_system
+    UPDATE tbl_pensionSystem
     SET
     pensionSystemCode=?,
     pensionSystemDescription=?              
@@ -457,10 +533,10 @@ export const getDataPensionSystem=async(req:Request)=>{
         const _size=(parseInt(size as string));        
         const _pageCalc=(_page-1)*_size; 
         const queryPagination=await pool.query(`
-        SELECT * FROM tbl_pension_system order by pensionSystemCode limit ?,?
+        SELECT * FROM tbl_pensionSystem order by pensionSystemCode limit ?,?
         `,[_pageCalc,_size]);
         const queryCount=await pool.query(`
-        select count(*) as count from tbl_pension_system
+        select count(*) as count from tbl_pensionSystem
         `);
         const data = JSON.parse(JSON.stringify(queryPagination[0])); 
         const total = JSON.parse(JSON.stringify(queryCount[0]));
@@ -473,7 +549,7 @@ export const getDataPensionSystem=async(req:Request)=>{
         SELECT 
         *
         FROM 
-            tbl_pension_system
+            tbl_pensionSystem
         where 
         pensionSystemId=?
         `,[pensionSystemId])     
@@ -494,10 +570,10 @@ export const getDataPensionSystem=async(req:Request)=>{
         SELECT 
            *
         FROM 
-	        tbl_pension_system         
+	        tbl_pensionSystem         
         `)
         const queryCount= await pool.query(`
-        select count(*) as count from tbl_pension_system
+        select count(*) as count from tbl_pensionSystem
         `)
         const data = JSON.parse(JSON.stringify(queryData[0]));
         const total = JSON.parse(JSON.stringify(queryCount[0]));         
@@ -512,7 +588,7 @@ export const createPensionAdministrator=async(req:Request)=>{
     let response;
     const {pensionAdministratorCode,pensionAdministratorDescription,pensionSystemId}=req.body;
     const query=await pool.query(`
-    INSERT INTO tbl_pension_administrator( 
+    INSERT INTO tbl_pensionAdministrator( 
         pensionAdministratorCode,
         pensionAdministratorDescription,
         pensionSystemId)
@@ -521,7 +597,7 @@ export const createPensionAdministrator=async(req:Request)=>{
         ?,
         ?        
     WHERE NOT EXISTS (	SELECT * 
-                        FROM tbl_pension_administrator
+                        FROM tbl_pensionAdministrator
                         WHERE 
                             pensionAdministratorCode=? 
                         LIMIT 1);
@@ -544,7 +620,7 @@ export const updateDataPensionAdministrator=async(req:Request)=>{
     const {pensionAdministratorId}=req.params
     const {pensionAdministratorCode,pensionAdministratorDescription,pensionSystemId}=req.body
     const query=await pool.query(`
-    UPDATE tbl_pension_administrator
+    UPDATE tbl_pensionAdministrator
     SET
     pensionAdministratorCode=?,
     pensionAdministratorDescription=?,
@@ -572,7 +648,7 @@ export const getDataPensionAdministrator= async(req:Request)=>{
     let response;
     const {page,size,pensionAdministratorId}=req.query
     const queryCount=await pool.query(`
-    select count(*) as count from tbl_pension_administrator
+    select count(*) as count from tbl_pensionAdministrator
     `);
     const total = JSON.parse(JSON.stringify(queryCount[0]));
     if(page && size){
@@ -587,8 +663,8 @@ export const getDataPensionAdministrator= async(req:Request)=>{
             B.pensionSystemId,
             B.pensionSystemCode,
             B.pensionSystemDescription
-        FROM tbl_pension_administrator A inner join
-            tbl_pension_system B on A.pensionSystemId=B.pensionSystemId
+        FROM tbl_pensionAdministrator A inner join
+            tbl_pensionSystem B on A.pensionSystemId=B.pensionSystemId
         order by A.pensionAdministratorCode 
         limit ?,?
         `,[_pageCalc,_size]);        
@@ -606,8 +682,8 @@ export const getDataPensionAdministrator= async(req:Request)=>{
             B.pensionSystemId,
             B.pensionSystemCode,
             B.pensionSystemDescription
-        FROM tbl_pension_administrator A inner join
-            tbl_pension_system B on A.pensionSystemId=B.pensionSystemId
+        FROM tbl_pensionAdministrator A inner join
+            tbl_pensionSystem B on A.pensionSystemId=B.pensionSystemId
         WHERE 
             A.pensionAdministratorId=?
         order by A.pensionAdministratorCode       
@@ -633,8 +709,8 @@ export const getDataPensionAdministrator= async(req:Request)=>{
             B.pensionSystemId,
             B.pensionSystemCode,
             B.pensionSystemDescription
-        FROM tbl_pension_administrator A inner join
-            tbl_pension_system B on A.pensionSystemId=B.pensionSystemId       
+        FROM tbl_pensionAdministrator A inner join
+            tbl_pensionSystem B on A.pensionSystemId=B.pensionSystemId       
         `)       
         const data = JSON.parse(JSON.stringify(queryData[0]));              
         return response={            

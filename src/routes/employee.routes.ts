@@ -365,6 +365,7 @@ router.post('/employee/type_employee',verifyToken,employeeController.addTypeEmpl
 router.get('/employee/type_employee',verifyToken,employeeController.getTypeEmployee)
 router.put('/employee/type_employee/:typeEmployeId',verifyToken,employeeController.updateTypeEmployee)
 
+
 //test
 router.get('/employee',employeeController.test)
 export default router;
