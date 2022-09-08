@@ -93,3 +93,35 @@ export const jsonToEmployee=(object:any):Iemployee=>{
     )
     
 }
+
+export const jsonToCategorySalary=(object:any):IcategorySalary=>{
+    return object.map((element:any)=>{
+        const employeeCategory:IemployeeCategory={
+            employeeCategoryId          :   element.employeeCategoryId,
+            employeeCategoryDescription :   element.employeeCategoryDescription,
+            employeeCategoryShortDescription:element.employeeCategoryShortDescription,  
+        }
+        return {
+            categorySalaryId    :   element.categorySalaryId,
+            categorySalarySalary:   element.categorySalaryId,
+            categorySalaryYear  :   element.categorySalaryYear,
+            employeeCategory
+        }
+    })
+}
+
+export const jsonToPensionAdministrator=(object:any):IpensionAdministrator=>{
+    return object.map((element:any)=>{
+        const pensionSystem:IpensionSystem={
+            pensionSystemId             : element.pensionSystemId,
+            pensionSystemCode           : element.pensionSystemCode,
+            pensionSystemDescription    : element.pensionSystemDescription
+        }
+        return {
+            pensionAdministratorId      :   element.pensionAdministratorId ,
+            pensionAdministratorCode    :   element.pensionAdministratorCode ,
+            pensionAdministratorDescription: element.pensionAdministratorDescription,
+            pensionSystem
+        }
+    })
+}

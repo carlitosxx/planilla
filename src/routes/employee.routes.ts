@@ -363,7 +363,7 @@ router.get('/employee/pension_administrator',verifyToken,employeeController.getP
 //TODO: TIPO DE TRABAJADOR
 router.post('/employee/type_employee',verifyToken,employeeController.addTypeEmployee)
 router.get('/employee/type_employee',verifyToken,employeeController.getTypeEmployee)
-router.put('/employee/type_employee/:typeEmployeId',verifyToken,employeeController.updateTypeEmployee)
+router.put('/employee/type_employee/:typeEmployeeId',verifyToken,employeeController.updateTypeEmployee)
 
 
 //test
