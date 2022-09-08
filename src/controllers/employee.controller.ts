@@ -18,7 +18,10 @@ import {
     getDataPensionAdministrator,
     createTypeEmployee,
     getDataTypeEmployee,
-    updateDataTypeEmployee} from "../services/employee.service";
+    updateDataTypeEmployee,
+    addCondition,
+    updateCondition,
+    getDataCondition} from "../services/employee.service";
 
 export const addEmployee=async(req:Request,res:Response)=>{
     try {
@@ -174,5 +177,29 @@ export const getTypeEmployee=async(req:Request,res:Response)=>{
         res.status(response.code).json(response.body);
     } catch (error) {
         handleHttp(res,"ERROR_GET_getTypeEmployee",error)
+    }
+}
+export const postCondition=async(req:Request,res:Response)=>{
+    try {
+        const response=await addCondition(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_POST_postCondition",error)
+    }
+}
+export const putCondition=async(req:Request,res:Response)=>{
+    try {
+        const response=await updateCondition(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_PUT_putCondition",error)
+    }
+}
+export const getCondition=async(req:Request,res:Response)=>{
+    try {
+        const response=await getDataCondition(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_PUT_putCondition",error)
     }
 }

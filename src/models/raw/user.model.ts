@@ -13,13 +13,15 @@ export interface Iuser {
     userUpdated?    :   Date;
 }
 export interface Iemployee{
-    employeeId     :   number;
-    employeeDni    :   string;
-    employeeFullname:   string;
-    employeeStatus  :   number;
-    categorySalary  :   IcategorySalary
-    typeEmployee    :   ItypeEmployee,
-    pensionAdministrator: IpensionAdministrator
+    employeeId          :   number,
+    employeeDni         :   string,
+    employeeFullname    :   string,
+    employeeStatus      :   number,
+    enmployeeEntryDate  :   Date,
+    categorySalary      :   IcategorySalary,
+    typeEmployee        :   ItypeEmployee,
+    pensionAdministrator:   IpensionAdministrator,
+    condition           :   Icondition
 };
 
 export interface IcategorySalary{
@@ -47,6 +49,12 @@ export interface IpensionSystem{
     pensionSystemId             : number,
     pensionSystemCode           : string,
     pensionSystemDescription    : string
+}
+export interface Icondition{
+    conditionId                 : number,
+    conditionCode               : string,
+    conditionName               : string,
+    conditionDescription        : string
 }
 
 
@@ -80,14 +88,22 @@ export const jsonToEmployee=(object:any):Iemployee=>{
             pensionSystem
 
         }
+        const condition:Icondition={
+            conditionId                 : element.conditionId,
+            conditionCode               : element.conditionCode,
+            conditionName               : element.conditionName,
+            conditionDescription        : element.conditionDescription
+        }
         return {
             employeeId:element.employeeId,
             employeeDni:element.employeeDni,
             employeeFullname:element.employeeFullname,
             employeeStatus:element.employeeStatus,
+            enmployeeEntryDate:element.employeeEntryDate,
             categorySalary,
             typeEmployee,            
-            pensionAdministrator
+            pensionAdministrator,
+            condition
         }
     }
     )

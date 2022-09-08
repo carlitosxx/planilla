@@ -364,7 +364,10 @@ router.get('/employee/pension_administrator',verifyToken,employeeController.getP
 router.post('/employee/type_employee',verifyToken,employeeController.addTypeEmployee)
 router.get('/employee/type_employee',verifyToken,employeeController.getTypeEmployee)
 router.put('/employee/type_employee/:typeEmployeeId',verifyToken,employeeController.updateTypeEmployee)
-
+//TODO: CONDICION
+router.post('/employee/condition',verifyToken,employeeController.postCondition)
+router.get('/employee/condition',verifyToken,employeeController.getCondition)
+router.put('/employee/condition/:conditionId',verifyToken,employeeController.putCondition)
 
 //test
 router.get('/employee',employeeController.test)

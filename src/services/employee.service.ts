@@ -4,9 +4,9 @@ import { jsonToEmployee, Iemployee, IemployeeCategory, IcategorySalary, jsonToCa
 /**Employee */
 export const createEmployee=async(req:Request)=>{
     let response;
-    const {employeeDni,employeeFullname,categorySalaryId,pensionAdministratorId,typeEmployeeId}=req.body;
-    const query = await pool.query(`call sp_post_employee(?,?,?,?,?,?)`,
-    [employeeDni,employeeFullname,1,categorySalaryId,pensionAdministratorId,typeEmployeeId])
+    const {employeeDni,employeeFullname,employeeDate,categorySalaryId,pensionAdministratorId,typeEmployeeId,conditionId}=req.body;
+    const query = await pool.query(`call sp_post_employee(?,?,?,?,?,?,?,?)`,
+    [employeeDni,employeeFullname,1,employeeDate,categorySalaryId,pensionAdministratorId,typeEmployeeId,conditionId])
     const queryParse = JSON.parse(JSON.stringify(query[0]));     
     if (queryParse.affectedRows==0){
         return response={
@@ -338,9 +338,7 @@ export const createTypeEmployee=async (req:Request)=>{
 export const updateDataTypeEmployee= async(req:Request)=>{
     let response;
     const {typeEmployeeId}=req.params
-    const {typeEmployeeDescription}=req.body
-    console.log(typeEmployeeId);
-    console.log(typeEmployeeDescription)
+    const {typeEmployeeDescription}=req.body 
     await pool.query(`call sp_put_typeEmployee(?,?)`,[typeEmployeeDescription,typeEmployeeId])
     
     return response={
@@ -374,6 +372,64 @@ export const getDataTypeEmployee=async(req:Request)=>{
     }else {        
         const queryData=await pool.query(`call sp_get_typeEmployee(null,null,null)`)       
         const data = (JSON.parse(JSON.stringify(queryData[0]))[0]);              
+        return response={            
+            body:{total,data},
+            code:200
+        } ;
+    }
+}
+/**Condition*/
+export const addCondition=async(req:Request)=>{
+    let response;
+    const {conditionCode,conditionName,conditionDescription}=req.body;
+    const query=await pool.query(`call sp_post_condition(?,?,?)`,[conditionCode,conditionName,conditionDescription]);    
+    const queryParse = JSON.parse(JSON.stringify(query[0]));     
+    if (queryParse.affectedRows==0){
+       return response={
+            body:{errorNo:1062,errorMessage:"conditionCode duplicate"},
+            code:403
+        }
+    }
+    return response={
+        body:{msg:"condition created"},
+        code:200
+    }  
+}
+export const updateCondition=async(req:Request)=>{
+    let response;
+    const {conditionId}=req.params
+    const {conditionCode,conditionName,conditionDescription}=req.body; 
+    await pool.query(`call sp_put_condition(?,?,?,?)`,[conditionCode,conditionName,conditionDescription,conditionId])    
+    return response={
+        body:{msg:"condition updated"},
+        code:200
+    }
+}
+export const getDataCondition=async(req:Request)=>{
+    let response;
+    const {page,size,conditionId}=req.query
+    const queryCount=await pool.query(`select count(*) as count from tbl_condition`);
+    const total = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;
+    if(page && size){
+        const _page=(parseInt(page as string));
+        const _size=(parseInt(size as string));        
+        const _pageCalc=(_page-1)*_size; 
+        const query=await pool.query(`call sp_get_condition(?,?,null)`,[_pageCalc,_size]);        
+        const data = (JSON.parse(JSON.stringify(query[0])))[0];         
+        return response={
+            body:{total,data},
+            code:200
+        } 
+    }else if (conditionId){
+        const query=await pool.query(`call sp_get_condition(null,null,?)`,[conditionId])          
+        const data = (JSON.parse(JSON.stringify(query[0])))[0];         
+        return response={
+            body:{total,data},
+            code:200
+            } ;        
+    }else {        
+        const query=await pool.query(`call sp_get_condition(null,null,null)`)       
+        const data = (JSON.parse(JSON.stringify(query[0]))[0]);              
         return response={            
             body:{total,data},
             code:200
