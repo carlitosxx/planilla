@@ -499,3 +499,62 @@ export const getDataLaborRegime=async(req:Request)=>{
         } ;
     }
 }
+
+/**occupational group */
+export const addOccupationalGroup=async(req:Request)=>{
+    let response;
+    const {occupationalGroupCode,occupationalGroupName,occupationalGroupDescription}=req.body;
+    const query=await pool.query(`call sp_post_occupationalGroup(?,?,?)`,[occupationalGroupCode,occupationalGroupName,occupationalGroupDescription]);    
+    const queryParse = JSON.parse(JSON.stringify(query[0]));     
+    if (queryParse.affectedRows==0){
+       return response={
+            body:{errorNo:1062,errorMessage:"occupationalGroupCode duplicate"},
+            code:403
+        }
+    }
+    return response={
+        body:{msg:"occupational Group created"},
+        code:200
+    }  
+}
+export const updateOccupationalGroup=async(req:Request)=>{
+    let response;
+    const {occupationalGroupId}=req.params
+    const {occupationalGroupCode,occupationalGroupName,occupationalGroupDescription}=req.body; 
+    await pool.query(`call sp_put_occupationalGroup(?,?,?,?)`,[occupationalGroupCode,occupationalGroupName,occupationalGroupDescription,occupationalGroupId])    
+    return response={
+        body:{msg:"occupational group updated"},
+        code:200
+    }
+}
+export const getDataOccupationalGroup=async(req:Request)=>{
+    let response;
+    const {page,size,occupationalGroupId}=req.query
+    const queryCount=await pool.query(`select count(*) as count from tbl_occupationalGroup`);
+    const total = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;
+    if(page && size){
+        const _page=(parseInt(page as string));
+        const _size=(parseInt(size as string));        
+        const _pageCalc=(_page-1)*_size; 
+        const query=await pool.query(`call sp_get_occupationalGroup(?,?,null)`,[_pageCalc,_size]);        
+        const data = (JSON.parse(JSON.stringify(query[0])))[0];         
+        return response={
+            body:{total,data},
+            code:200
+        } 
+    }else if (occupationalGroupId){
+        const query=await pool.query(`call sp_get_occupationalGroup(null,null,?)`,[occupationalGroupId])          
+        const data = (JSON.parse(JSON.stringify(query[0])))[0];         
+        return response={
+            body:{total,data},
+            code:200
+            } ;        
+    }else {        
+        const query=await pool.query(`call sp_get_occupationalGroup(null,null,null)`)       
+        const data = (JSON.parse(JSON.stringify(query[0]))[0]);              
+        return response={            
+            body:{total,data},
+            code:200
+        } ;
+    }
+}

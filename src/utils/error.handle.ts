@@ -13,6 +13,9 @@ const handleHttp = (res:Response,error:string,rawError:any)=>{
     }else if (rawError.errno==1054){
         res.status(403);
         res.send({errorNo:rawError.errno,errorMessage:rawError.sqlMessage})
+    }else if (rawError.errno==1048){
+        res.status(403);
+        res.send({errorNo:rawError.errno,errorMessage:rawError.sqlMessage})
     }
 
     else{

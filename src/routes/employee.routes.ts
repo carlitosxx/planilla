@@ -372,6 +372,11 @@ router.put('/employee/condition/:conditionId',verifyToken,employeeController.put
 router.post('/employee/labor_regime',verifyToken,employeeController.postLaborRegime)
 router.put('/employee/labor_regime/:laborRegimeId',verifyToken,employeeController.putLaborRegime)
 router.get('/employee/labor_regime',verifyToken,employeeController.getLaborRegime)
+//TODO: GRUPO OCUPACIONAL
+router.post('/employee/occupational_group',verifyToken,employeeController.postOccupationalGroup)
+router.put('/employee/occupational_group/:occupationalGroupId',verifyToken,employeeController.putOccupationalGroup)
+router.get('/employee/occupational_group',verifyToken,employeeController.getOccupationalGroup)
+
 //test
 router.get('/employee',employeeController.test)
 export default router;

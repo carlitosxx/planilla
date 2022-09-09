@@ -24,7 +24,10 @@ import {
     getDataCondition,
     addLaborRegime,
     updateLaborRegime,
-    getDataLaborRegime} from "../services/employee.service";
+    getDataLaborRegime,
+    addOccupationalGroup,
+    updateOccupationalGroup,
+    getDataOccupationalGroup} from "../services/employee.service";
 
 export const addEmployee=async(req:Request,res:Response)=>{
     try {
@@ -228,5 +231,29 @@ export const getLaborRegime=async(req:Request,res:Response)=>{
         res.status(response.code).json(response.body);
     } catch (error) {
         handleHttp(res,"ERROR_GET_getLaborRegime",error)
+    }
+}
+export const postOccupationalGroup=async(req:Request,res:Response)=>{
+    try {
+        const response=await addOccupationalGroup(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_POS_postOccupationalGroup",error)
+    }
+}
+export const putOccupationalGroup=async(req:Request,res:Response)=>{
+    try {
+        const response=await updateOccupationalGroup(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_PUT_ putOccupationalGroup",error)
+    }
+}
+export const getOccupationalGroup=async(req:Request,res:Response)=>{
+    try {
+        const response=await getDataOccupationalGroup(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_OccupationalGroup",error)
     }
 }

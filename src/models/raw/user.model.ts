@@ -58,10 +58,16 @@ export interface Icondition{
     conditionDescription        : string
 }
 export interface IlaborRegime{
-    laborRegimeId       :   number,
-    laborRegimeCode     :   string,
-    laborRegimeName     :   string,
-    laborRegimeDescription: string
+    laborRegimeId           :   number,
+    laborRegimeCode         :   string,
+    laborRegimeName         :   string,
+    laborRegimeDescription  :   string
+}
+export interface IoccupationalGroup{
+    occupationalGroupId             :   number,
+    occupationalGroupCode           :   string,
+    occupationalGroupName           :   string,
+    occupationalGroupDescription    :   string,
 }
 
 
@@ -107,6 +113,12 @@ export const jsonToEmployee=(object:any):Iemployee=>{
             laborRegimeName     :   element.laborRegimeName,
             laborRegimeDescription: element.laborRegimeDescription
         }
+        const occupationalGroup:IoccupationalGroup={
+            occupationalGroupId             :   element.occupationalGroupId,
+            occupationalGroupCode           :   element.occupationalGroupCode,
+            occupationalGroupName           :   element.occupationalGroupName,
+            occupationalGroupDescription    :   element.occupationalGroupDescription
+        }
         return {
             employeeId:element.employeeId,
             employeeDni:element.employeeDni,
@@ -117,7 +129,8 @@ export const jsonToEmployee=(object:any):Iemployee=>{
             typeEmployee,            
             pensionAdministrator,
             condition,
-            laborRegime
+            laborRegime,
+            occupationalGroup
         }
     }
     )
