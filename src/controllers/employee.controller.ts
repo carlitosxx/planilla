@@ -21,7 +21,10 @@ import {
     updateDataTypeEmployee,
     addCondition,
     updateCondition,
-    getDataCondition} from "../services/employee.service";
+    getDataCondition,
+    addLaborRegime,
+    updateLaborRegime,
+    getDataLaborRegime} from "../services/employee.service";
 
 export const addEmployee=async(req:Request,res:Response)=>{
     try {
@@ -201,5 +204,29 @@ export const getCondition=async(req:Request,res:Response)=>{
         res.status(response.code).json(response.body);
     } catch (error) {
         handleHttp(res,"ERROR_PUT_putCondition",error)
+    }
+}
+export const postLaborRegime=async(req:Request,res:Response)=>{
+    try {
+        const response=await addLaborRegime(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_POST_postLaborRegime",error)
+    }
+}
+export const putLaborRegime=async(req:Request,res:Response)=>{
+    try {
+        const response=await updateLaborRegime(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_PUT_putLaborRegime",error)
+    }
+}
+export const getLaborRegime=async(req:Request,res:Response)=>{
+    try {
+        const response=await getDataLaborRegime(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getLaborRegime",error)
     }
 }

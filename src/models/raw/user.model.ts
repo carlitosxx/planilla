@@ -21,7 +21,8 @@ export interface Iemployee{
     categorySalary      :   IcategorySalary,
     typeEmployee        :   ItypeEmployee,
     pensionAdministrator:   IpensionAdministrator,
-    condition           :   Icondition
+    condition           :   Icondition,
+    laborRegime         :   IlaborRegime
 };
 
 export interface IcategorySalary{
@@ -55,6 +56,12 @@ export interface Icondition{
     conditionCode               : string,
     conditionName               : string,
     conditionDescription        : string
+}
+export interface IlaborRegime{
+    laborRegimeId       :   number,
+    laborRegimeCode     :   string,
+    laborRegimeName     :   string,
+    laborRegimeDescription: string
 }
 
 
@@ -94,6 +101,12 @@ export const jsonToEmployee=(object:any):Iemployee=>{
             conditionName               : element.conditionName,
             conditionDescription        : element.conditionDescription
         }
+        const laborRegime:IlaborRegime={
+            laborRegimeId       :   element.laborRegimeId,
+            laborRegimeCode     :   element.laborRegimeCode,
+            laborRegimeName     :   element.laborRegimeName,
+            laborRegimeDescription: element.laborRegimeDescription
+        }
         return {
             employeeId:element.employeeId,
             employeeDni:element.employeeDni,
@@ -103,7 +116,8 @@ export const jsonToEmployee=(object:any):Iemployee=>{
             categorySalary,
             typeEmployee,            
             pensionAdministrator,
-            condition
+            condition,
+            laborRegime
         }
     }
     )

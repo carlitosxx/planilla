@@ -368,7 +368,10 @@ router.put('/employee/type_employee/:typeEmployeeId',verifyToken,employeeControl
 router.post('/employee/condition',verifyToken,employeeController.postCondition)
 router.get('/employee/condition',verifyToken,employeeController.getCondition)
 router.put('/employee/condition/:conditionId',verifyToken,employeeController.putCondition)
-
+//TODO: REGIMEN LABORAL
+router.post('/employee/labor_regime',verifyToken,employeeController.postLaborRegime)
+router.put('/employee/labor_regime/:laborRegimeId',verifyToken,employeeController.putLaborRegime)
+router.get('/employee/labor_regime',verifyToken,employeeController.getLaborRegime)
 //test
 router.get('/employee',employeeController.test)
 export default router;

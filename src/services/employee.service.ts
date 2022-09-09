@@ -4,9 +4,9 @@ import { jsonToEmployee, Iemployee, IemployeeCategory, IcategorySalary, jsonToCa
 /**Employee */
 export const createEmployee=async(req:Request)=>{
     let response;
-    const {employeeDni,employeeFullname,employeeDate,categorySalaryId,pensionAdministratorId,typeEmployeeId,conditionId}=req.body;
-    const query = await pool.query(`call sp_post_employee(?,?,?,?,?,?,?,?)`,
-    [employeeDni,employeeFullname,1,employeeDate,categorySalaryId,pensionAdministratorId,typeEmployeeId,conditionId])
+    const {employeeDni,employeeFullname,employeeEntryDate,categorySalaryId,pensionAdministratorId,typeEmployeeId,conditionId,laborRegimeId}=req.body;
+    const query = await pool.query(`call sp_post_employee(?,?,?,?,?,?,?,?,?)`,
+    [employeeDni,employeeFullname,1,employeeEntryDate,categorySalaryId,pensionAdministratorId,typeEmployeeId,conditionId,laborRegimeId])
     const queryParse = JSON.parse(JSON.stringify(query[0]));     
     if (queryParse.affectedRows==0){
         return response={
@@ -23,10 +23,10 @@ export const updateDataEmployee=async(req:Request)=>{
     let response;
     const {employeeId}=req.params
     const _employeeId=parseInt(employeeId);    
-    const {employeeDni,employeeFullname,employeeStatus,categorySalaryId,pensionAdministratorId,typeEmployeeId}=req.body; 
+    const {employeeDni,employeeFullname,employeeStatus,categorySalaryId,pensionAdministratorId,typeEmployeeId,conditionId,laborRegimeId}=req.body; 
     await pool.query(`
-    call sp_put_employee(?,?,?,?,?,?,?)
-    `,[employeeDni,employeeFullname,employeeStatus,categorySalaryId,pensionAdministratorId,typeEmployeeId,_employeeId]) 
+    call sp_put_employee(?,?,?,?,?,?,?,?)
+    `,[employeeDni,employeeFullname,employeeStatus,categorySalaryId,pensionAdministratorId,typeEmployeeId,conditionId,laborRegimeId,_employeeId]) 
     return response={
             body:{msg:"employee updated"},
             code:200
@@ -272,17 +272,22 @@ export const updateDataPensionAdministrator=async(req:Request)=>{
     const query=await pool.query(`call sp_put_pensionAdministrator(?,?,?,?)`,
     [pensionAdministratorCode,pensionAdministratorDescription,pensionSystemId,pensionAdministratorId])
     const consultaParse = JSON.parse(JSON.stringify(query[0]));
-    if (consultaParse.changedRows==1){    
-        return response={
-            body:{msg:"pension administrator updated"},
-            code:200
-        }                  
-    }else{     
-        return response={
-            body:{errorNo:404,errorMessage:"pension administrator has already been updated"},
-            code:404
-        }         
-    }  
+    return response={
+        body:{msg:"pension administrator updated"},
+        code:200
+    }   
+
+    // if (consultaParse.changedRows==1){    
+    //     return response={
+    //         body:{msg:"pension administrator updated"},
+    //         code:200
+    //     }                  
+    // }else{     
+    //     return response={
+    //         body:{errorNo:404,errorMessage:"pension administrator has already been updated"},
+    //         code:404
+    //     }         
+    // }  
 }
 export const getDataPensionAdministrator= async(req:Request)=>{
     let response;
@@ -378,7 +383,7 @@ export const getDataTypeEmployee=async(req:Request)=>{
         } ;
     }
 }
-/**Condition*/
+/**condition*/
 export const addCondition=async(req:Request)=>{
     let response;
     const {conditionCode,conditionName,conditionDescription}=req.body;
@@ -429,6 +434,64 @@ export const getDataCondition=async(req:Request)=>{
             } ;        
     }else {        
         const query=await pool.query(`call sp_get_condition(null,null,null)`)       
+        const data = (JSON.parse(JSON.stringify(query[0]))[0]);              
+        return response={            
+            body:{total,data},
+            code:200
+        } ;
+    }
+}
+/**labor regime */
+export const addLaborRegime =async(req:Request)=>{
+    let response;
+    const {laborRegimeCode,laborRegimeName,laborRegimeDescription}=req.body;
+    const query=await pool.query(`call sp_post_laborRegime(?,?,?)`,[laborRegimeCode,laborRegimeName,laborRegimeDescription]);    
+    const queryParse = JSON.parse(JSON.stringify(query[0]));     
+    if (queryParse.affectedRows==0){
+       return response={
+            body:{errorNo:1062,errorMessage:"laborRegimeCode duplicate"},
+            code:403
+        }
+    }
+    return response={
+        body:{msg:"labor regime created"},
+        code:200
+    }  
+}
+export const updateLaborRegime=async(req:Request)=>{
+    let response;
+    const {laborRegimeId}=req.params
+    const {laborRegimeCode,laborRegimeName,laborRegimeDescription}=req.body; 
+    await pool.query(`call sp_put_laborRegime(?,?,?,?)`,[laborRegimeCode,laborRegimeName,laborRegimeDescription,laborRegimeId])    
+    return response={
+        body:{msg:"Labor regime updated"},
+        code:200
+    }
+}
+export const getDataLaborRegime=async(req:Request)=>{
+    let response;
+    const {page,size,laborRegimeId}=req.query
+    const queryCount=await pool.query(`select count(*) as count from tbl_laborRegime`);
+    const total = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;
+    if(page && size){
+        const _page=(parseInt(page as string));
+        const _size=(parseInt(size as string));        
+        const _pageCalc=(_page-1)*_size; 
+        const query=await pool.query(`call sp_get_laborRegime(?,?,null)`,[_pageCalc,_size]);        
+        const data = (JSON.parse(JSON.stringify(query[0])))[0];         
+        return response={
+            body:{total,data},
+            code:200
+        } 
+    }else if (laborRegimeId){
+        const query=await pool.query(`call sp_get_laborRegime(null,null,?)`,[laborRegimeId])          
+        const data = (JSON.parse(JSON.stringify(query[0])))[0];         
+        return response={
+            body:{total,data},
+            code:200
+            } ;        
+    }else {        
+        const query=await pool.query(`call sp_get_laborRegime(null,null,null)`)       
         const data = (JSON.parse(JSON.stringify(query[0]))[0]);              
         return response={            
             body:{total,data},
