@@ -377,6 +377,7 @@ router.post('/employee/occupational_group',verifyToken,employeeController.postOc
 router.put('/employee/occupational_group/:occupationalGroupId',verifyToken,employeeController.putOccupationalGroup)
 router.get('/employee/occupational_group',verifyToken,employeeController.getOccupationalGroup)
 
+
 //test
 router.get('/employee',employeeController.test)
 export default router;

@@ -27,7 +27,7 @@ app.use(function (error: any, req: any, res: any, next: () => void) {
       next();          
     }
 });
-// Route documentarion
+// Route documentation
 app.use("/documentation",swaggerUi.serve,swaggerUi.setup(openApiConfiguration))
 // Routes API
 app.use(userRoute);

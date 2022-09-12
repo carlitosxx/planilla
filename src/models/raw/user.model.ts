@@ -11,20 +11,21 @@ export interface Iuser {
     userStatus?     :   number;
     userCreated?    :   Date;
     userUpdated?    :   Date;
-}
+};
 export interface Iemployee{
     employeeId          :   number,
     employeeDni         :   string,
     employeeFullname    :   string,
     employeeStatus      :   number,
-    enmployeeEntryDate  :   Date,
+    employeeEntryDate   :   Date,
+    employeeCUSPP       :   string,
+    employeeAIRHSP      :   string,
     categorySalary      :   IcategorySalary,
     typeEmployee        :   ItypeEmployee,
     pensionAdministrator:   IpensionAdministrator,
     condition           :   Icondition,
     laborRegime         :   IlaborRegime
 };
-
 export interface IcategorySalary{
     categorySalaryId    :   number,
     categorySalarySalary:   number,
@@ -124,9 +125,11 @@ export const jsonToEmployee=(object:any):Iemployee=>{
             employeeDni:element.employeeDni,
             employeeFullname:element.employeeFullname,
             employeeStatus:element.employeeStatus,
-            enmployeeEntryDate:element.employeeEntryDate,
+            employeeEntryDate:element.employeeEntryDate,
+            employeeCUSPP:element.employeeCUSPP,                 
+            employeeAIRHSP:element.employeeAIRHSP,
             categorySalary,
-            typeEmployee,            
+            typeEmployee,
             pensionAdministrator,
             condition,
             laborRegime,
