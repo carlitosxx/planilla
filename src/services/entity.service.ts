@@ -16,10 +16,10 @@ export const addEntity=async(req:Request)=>{
         entityName,
         entityEmployer        
         }=req.body;
-    const {file}=req;   
-    const query= await pool.query(`
-       call sp_post_entity(?,?,?,?,?)
-    `,[entityRuc,entityCode,entityName,entityEmployer,file?.filename]);
+    const {file}=req;
+    const pathFilename="/storage/"+file?.filename;   
+    const query= await pool.query(`call sp_post_entity(?,?,?,?,?)`,
+    [entityRuc,entityCode,entityName,entityEmployer,pathFilename]);
     const queryParse = JSON.parse(JSON.stringify(query[0]));     
     if (queryParse.affectedRows==0){
         return response={
