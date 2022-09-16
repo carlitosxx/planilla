@@ -70,7 +70,24 @@ export interface IoccupationalGroup{
     occupationalGroupName           :   string,
     occupationalGroupDescription    :   string,
 }
-
+export interface Iestablishment{
+    establishmentId                 :   number,
+    establishmentCode               :   string,
+    establishmentName               :   string,
+    establishmentDescription        :   string,
+}
+export interface Iposition{
+    positionId                      :   number,
+    positionCode                    :   string,
+    positionName                    :   string,
+    positionDescription             :   string,
+}
+export interface Iworkday{
+    workdayId                       :   number,
+    workdayHoursDay                 :   number,
+    workdayDaysWeek                 :   number,
+    workdayDescription              :   string
+}
 
 export const jsonToEmployee=(object:any):Iemployee=>{
     return object.map(
@@ -120,6 +137,24 @@ export const jsonToEmployee=(object:any):Iemployee=>{
             occupationalGroupName           :   element.occupationalGroupName,
             occupationalGroupDescription    :   element.occupationalGroupDescription
         }
+        const establishment:Iestablishment={
+            establishmentId                 :   element.establishmentId,
+            establishmentCode               :   element.establishmentCode,
+            establishmentName               :   element.establishmentName,
+            establishmentDescription        :   element.establishmentDescription
+        }
+        const position:Iposition={
+            positionId                      :   element.positionId,    
+            positionCode                    :   element.positionCode,
+            positionName                    :   element.positionName,
+            positionDescription             :   element.positionDescription
+        }
+        const workday:Iworkday={
+            workdayId                       :   element.workdayId,
+            workdayHoursDay                 :   element.workdayHoursDay,
+            workdayDaysWeek                 :   element.workdayDaysWeek,
+            workdayDescription              :   element.workdayDescription
+        }
         return {
             employeeId:element.employeeId,
             employeeDni:element.employeeDni,
@@ -133,7 +168,10 @@ export const jsonToEmployee=(object:any):Iemployee=>{
             pensionAdministrator,
             condition,
             laborRegime,
-            occupationalGroup
+            occupationalGroup,
+            establishment,
+            position,
+            workday
         }
     }
     )

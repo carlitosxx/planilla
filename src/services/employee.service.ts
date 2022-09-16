@@ -4,9 +4,39 @@ import { jsonToEmployee, Iemployee, IemployeeCategory, IcategorySalary, jsonToCa
 /**Employee */
 export const createEmployee=async(req:Request)=>{
     let response;
-    const {employeeDni,employeeFullname,employeeEntryDate,employeeCUSPP,employeeAIRHSP,categorySalaryId,pensionAdministratorId,typeEmployeeId,conditionId,laborRegimeId,occupationalGroupId}=req.body;
-    const query = await pool.query(`call sp_post_employee(?,?,?,?,?,?,?,?,?,?,?,?)`,
-    [employeeDni,employeeFullname,1,employeeEntryDate,employeeCUSPP,employeeAIRHSP,categorySalaryId,pensionAdministratorId,typeEmployeeId,conditionId,laborRegimeId,occupationalGroupId])
+    const {
+        employeeDni,
+        employeeFullname,
+        employeeEntryDate,
+        employeeCUSPP,
+        employeeAIRHSP,
+        categorySalaryId,
+        pensionAdministratorId,
+        typeEmployeeId,
+        conditionId,
+        laborRegimeId,
+        occupationalGroupId,
+        establishmentId,
+        positionId,
+        workdayId}=req.body;
+    const query = await pool.query(`call sp_post_employee(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    [
+        employeeDni,
+        employeeFullname,
+        1,
+        employeeEntryDate,
+        employeeCUSPP,
+        employeeAIRHSP,
+        categorySalaryId,
+        pensionAdministratorId,
+        typeEmployeeId,
+        conditionId,
+        laborRegimeId,
+        occupationalGroupId,
+        establishmentId,
+        positionId,
+        workdayId
+    ])
     const queryParse = JSON.parse(JSON.stringify(query[0]));     
     if (queryParse.affectedRows==0){
         return response={
@@ -23,10 +53,42 @@ export const updateDataEmployee=async(req:Request)=>{
     let response;
     const {employeeId}=req.params
     const _employeeId=parseInt(employeeId);    
-    const {employeeDni,employeeFullname,employeeStatus,employeeEntryDate,employeeCUSPP,employeeAIRHSP,categorySalaryId,pensionAdministratorId,typeEmployeeId,conditionId,laborRegimeId,occupationalGroupId}=req.body; 
+    const {
+        employeeDni,
+        employeeFullname,
+        employeeStatus,
+        employeeEntryDate,
+        employeeCUSPP,
+        employeeAIRHSP,
+        categorySalaryId,
+        pensionAdministratorId,
+        typeEmployeeId,
+        conditionId,
+        laborRegimeId,
+        occupationalGroupId,
+        establishmentId,
+        positionId,
+        workdayId
+    }=req.body; 
     await pool.query(`
-    call sp_put_employee(?,?,?,?,?,?,?,?,?,?,?,?,?)
-    `,[employeeDni,employeeFullname,employeeStatus,employeeEntryDate,employeeCUSPP,employeeAIRHSP,categorySalaryId,pensionAdministratorId,typeEmployeeId,conditionId,laborRegimeId,occupationalGroupId,_employeeId]) 
+    call sp_put_employee(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    `,[
+        employeeDni,
+        employeeFullname,
+        employeeStatus,
+        employeeEntryDate,
+        employeeCUSPP,
+        employeeAIRHSP,
+        categorySalaryId,
+        pensionAdministratorId,
+        typeEmployeeId,
+        conditionId,
+        laborRegimeId,
+        occupationalGroupId,
+        establishmentId,
+        positionId,
+        workdayId,
+        _employeeId]) 
     return response={
             body:{msg:"employee updated"},
             code:200
@@ -736,3 +798,4 @@ export const getDataWorkday=async(req:Request)=>{
         } ;
     }
 }
+
