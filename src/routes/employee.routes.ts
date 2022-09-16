@@ -388,6 +388,10 @@ router.get('/employee/position',verifyToken,employeeController.getPosition)
 router.post('/employee/workday',verifyToken,employeeController.postWorkday)
 router.put('/employee/workday/:workdayId',verifyToken,employeeController.putWorkday)
 router.get('/employee/workday',verifyToken,employeeController.getWorkday)
+//TODO: UNIDAD ORGANICA
+router.post('/employee/organic_unit',verifyToken,employeeController.postOrganicUnit)
+router.put('/employee/organic_unit/:organicUnitId',verifyToken,employeeController.putOrganicUnit)
+router.get('/employee/organic_unit',verifyToken,employeeController.getOrganicUnit)
 
 //test
 router.get('/employee',employeeController.test)

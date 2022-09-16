@@ -88,6 +88,11 @@ export interface Iworkday{
     workdayDaysWeek                 :   number,
     workdayDescription              :   string
 }
+export interface IorganicUnit{
+    organicUnitId                   :   number,
+    organicUnitCode                 :   string,
+    organicUnitDescription          :   string
+}
 
 export const jsonToEmployee=(object:any):Iemployee=>{
     return object.map(
@@ -155,6 +160,11 @@ export const jsonToEmployee=(object:any):Iemployee=>{
             workdayDaysWeek                 :   element.workdayDaysWeek,
             workdayDescription              :   element.workdayDescription
         }
+        const organicUnit:IorganicUnit={
+            organicUnitId                   :   element.organicUnitId,
+            organicUnitCode                 :   element.organicUnitCode,
+            organicUnitDescription          :   element.organicUnitDescription            
+        }
         return {
             employeeId:element.employeeId,
             employeeDni:element.employeeDni,
@@ -171,7 +181,8 @@ export const jsonToEmployee=(object:any):Iemployee=>{
             occupationalGroup,
             establishment,
             position,
-            workday
+            workday,
+            organicUnit
         }
     }
     )

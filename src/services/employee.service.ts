@@ -18,8 +18,9 @@ export const createEmployee=async(req:Request)=>{
         occupationalGroupId,
         establishmentId,
         positionId,
-        workdayId}=req.body;
-    const query = await pool.query(`call sp_post_employee(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+        workdayId,
+        organicUnitId}=req.body;
+    const query = await pool.query(`call sp_post_employee(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     [
         employeeDni,
         employeeFullname,
@@ -35,7 +36,8 @@ export const createEmployee=async(req:Request)=>{
         occupationalGroupId,
         establishmentId,
         positionId,
-        workdayId
+        workdayId,
+        organicUnitId
     ])
     const queryParse = JSON.parse(JSON.stringify(query[0]));     
     if (queryParse.affectedRows==0){
@@ -68,10 +70,11 @@ export const updateDataEmployee=async(req:Request)=>{
         occupationalGroupId,
         establishmentId,
         positionId,
-        workdayId
+        workdayId,
+        organicUnitId
     }=req.body; 
     await pool.query(`
-    call sp_put_employee(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    call sp_put_employee(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     `,[
         employeeDni,
         employeeFullname,
@@ -88,6 +91,7 @@ export const updateDataEmployee=async(req:Request)=>{
         establishmentId,
         positionId,
         workdayId,
+        organicUnitId,
         _employeeId]) 
     return response={
             body:{msg:"employee updated"},
@@ -798,3 +802,62 @@ export const getDataWorkday=async(req:Request)=>{
     }
 }
 
+export const addOrganicUnit=async(req:Request)=>{
+    let response;
+    const {organicUnitCode,organicUnitDescription}=req.body;
+    const query=await pool.query(`call sp_post_organicUnit(?,?)`,[organicUnitCode,organicUnitDescription]);    
+    const queryParse = JSON.parse(JSON.stringify(query[0]));     
+    if (queryParse.affectedRows==0){
+       return response={
+            body:{errorNo:1062,errorMessage:"OrganicUnitCode duplicate"},
+            code:403
+        }
+    }
+    return response={
+        body:{msg:"Organic Unit created"},
+        code:200
+    } 
+}
+
+export const updateOrganicUnit=async(req:Request)=>{
+    let response;
+    const {organicUnitId}=req.params
+    const {organicUnitCode,organicUnitDescription}=req.body; 
+    await pool.query(`call sp_put_organicUnit(?,?,?)`,
+    [organicUnitCode,organicUnitDescription,organicUnitId])    
+    return response={
+        body:{msg:"organic Unit updated"},
+        code:200
+    }
+}
+export const getDataOrganicUnit=async(req:Request)=>{
+    let response;
+    const {page,size,organicUnitId}=req.query
+    const queryCount=await pool.query(`select count(*) as count from tbl_organicUnit`);
+    const total = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;
+    if(page && size){
+        const _page=(parseInt(page as string));
+        const _size=(parseInt(size as string));        
+        const _pageCalc=(_page-1)*_size; 
+        const query=await pool.query(`call sp_get_organicUnit(?,?,null)`,[_pageCalc,_size]);        
+        const data = (JSON.parse(JSON.stringify(query[0])))[0];         
+        return response={
+            body:{total,data},
+            code:200
+        } 
+    }else if (organicUnitId){
+        const query=await pool.query(`call sp_get_organicUnit(null,null,?)`,[organicUnitId])          
+        const data = (JSON.parse(JSON.stringify(query[0])))[0];         
+        return response={
+            body:{total,data},
+            code:200
+            } ;        
+    }else {        
+        const query=await pool.query(`call sp_get_organicUnit(null,null,null)`)       
+        const data = (JSON.parse(JSON.stringify(query[0]))[0]);              
+        return response={            
+            body:{total,data},
+            code:200
+        } ;
+    }
+}

@@ -302,3 +302,28 @@ export const getWorkday=async(req:Request,res:Response)=>{
         handleHttp(res,"ERROR_GET_getWorkday",error)
     }
 }
+
+export const postOrganicUnit=async(req:Request,res:Response)=>{
+    try {
+        const response=await serviceEmployee.addOrganicUnit(req);
+        res.status(response.code).json(response.body)
+    } catch (error) {
+        handleHttp(res,"ERROR_POST_postOrganicUnit",error)
+    }
+}
+export const putOrganicUnit=async(req:Request,res:Response)=>{
+    try {
+        const response=await serviceEmployee.updateOrganicUnit(req);
+        res.status(response.code).json(response.body)
+    } catch (error) {
+        handleHttp(res,"ERROR_PUT_putOrganicUnit",error)
+    }
+}
+export const getOrganicUnit=async(req:Request,res:Response)=>{
+    try {
+        const response=await serviceEmployee.getDataOrganicUnit(req);
+        res.status(response.code).json(response.body)
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getOrganicUnit",error)
+    }
+}
