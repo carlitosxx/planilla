@@ -520,7 +520,8 @@ export const updateOccupationalGroup=async(req:Request)=>{
     let response;
     const {occupationalGroupId}=req.params
     const {occupationalGroupCode,occupationalGroupName,occupationalGroupDescription}=req.body; 
-    await pool.query(`call sp_put_occupationalGroup(?,?,?,?)`,[occupationalGroupCode,occupationalGroupName,occupationalGroupDescription,occupationalGroupId])    
+    await pool.query(`call sp_put_occupationalGroup(?,?,?,?)`,
+    [occupationalGroupCode,occupationalGroupName,occupationalGroupDescription,occupationalGroupId])    
     return response={
         body:{msg:"occupational group updated"},
         code:200
@@ -550,6 +551,184 @@ export const getDataOccupationalGroup=async(req:Request)=>{
             } ;        
     }else {        
         const query=await pool.query(`call sp_get_occupationalGroup(null,null,null)`)       
+        const data = (JSON.parse(JSON.stringify(query[0]))[0]);              
+        return response={            
+            body:{total,data},
+            code:200
+        } ;
+    }
+}
+/**establishment */
+export const addEstablishment=async(req:Request)=>{
+    let response;
+    const {establishmentCode,establishmentName,establishmentDescription}=req.body;
+    const query=await pool.query(`call sp_post_establishment(?,?,?)`,[establishmentCode,establishmentName,establishmentDescription]);    
+    const queryParse = JSON.parse(JSON.stringify(query[0]));     
+    if (queryParse.affectedRows==0){
+       return response={
+            body:{errorNo:1062,errorMessage:"establishmentCode duplicate"},
+            code:403
+        }
+    }
+    return response={
+        body:{msg:"establishment created"},
+        code:200
+    }  
+}
+export const updateEstablishment=async(req:Request)=>{
+    let response;
+    const {establishmentId}=req.params
+    const {establishmentCode,establishmentName,establishmentDescription}=req.body; 
+    await pool.query(`call sp_put_establishment(?,?,?,?)`,
+    [establishmentCode,establishmentName,establishmentDescription,establishmentId])    
+    return response={
+        body:{msg:"Establishment updated"},
+        code:200
+    }
+}
+export const getDataEstablishment=async(req:Request)=>{
+    let response;
+    const {page,size,establishmentId}=req.query
+    const queryCount=await pool.query(`select count(*) as count from tbl_establishment`);
+    const total = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;
+    if(page && size){
+        const _page=(parseInt(page as string));
+        const _size=(parseInt(size as string));        
+        const _pageCalc=(_page-1)*_size; 
+        const query=await pool.query(`call sp_get_establishment(?,?,null)`,[_pageCalc,_size]);        
+        const data = (JSON.parse(JSON.stringify(query[0])))[0];         
+        return response={
+            body:{total,data},
+            code:200
+        } 
+    }else if (establishmentId){
+        const query=await pool.query(`call sp_get_establishment(null,null,?)`,[establishmentId])          
+        const data = (JSON.parse(JSON.stringify(query[0])))[0];         
+        return response={
+            body:{total,data},
+            code:200
+            } ;        
+    }else {        
+        const query=await pool.query(`call sp_get_establishment(null,null,null)`)       
+        const data = (JSON.parse(JSON.stringify(query[0]))[0]);              
+        return response={            
+            body:{total,data},
+            code:200
+        } ;
+    }
+}
+/**position */
+export const addPosition=async(req:Request)=>{
+    let response;
+    const {positionCode,positionName,positionDescription}=req.body;
+    const query=await pool.query(`call sp_post_position(?,?,?)`,[positionCode,positionName,positionDescription]);    
+    const queryParse = JSON.parse(JSON.stringify(query[0]));     
+    if (queryParse.affectedRows==0){
+       return response={
+            body:{errorNo:1062,errorMessage:"positionCode duplicate"},
+            code:403
+        }
+    }
+    return response={
+        body:{msg:"position created"},
+        code:200
+    }  
+}
+export const updatePosition=async(req:Request)=>{
+    let response;
+    const {positionId}=req.params
+    const {positionCode,positionName,positionDescription}=req.body; 
+    await pool.query(`call sp_put_position(?,?,?,?)`,
+    [positionCode,positionName,positionDescription,positionId])    
+    return response={
+        body:{msg:"Position updated"},
+        code:200
+    }
+}
+export const getDataPosition=async(req:Request)=>{
+    let response;
+    const {page,size,positionId}=req.query
+    const queryCount=await pool.query(`select count(*) as count from tbl_position`);
+    const total = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;
+    if(page && size){
+        const _page=(parseInt(page as string));
+        const _size=(parseInt(size as string));        
+        const _pageCalc=(_page-1)*_size; 
+        const query=await pool.query(`call sp_get_position(?,?,null)`,[_pageCalc,_size]);        
+        const data = (JSON.parse(JSON.stringify(query[0])))[0];         
+        return response={
+            body:{total,data},
+            code:200
+        } 
+    }else if (positionId){
+        const query=await pool.query(`call sp_get_position(null,null,?)`,[positionId])          
+        const data = (JSON.parse(JSON.stringify(query[0])))[0];         
+        return response={
+            body:{total,data},
+            code:200
+            } ;        
+    }else {        
+        const query=await pool.query(`call sp_get_position(null,null,null)`)       
+        const data = (JSON.parse(JSON.stringify(query[0]))[0]);              
+        return response={            
+            body:{total,data},
+            code:200
+        } ;
+    }
+}
+
+/**workday */
+export const addWorkday=async(req:Request)=>{
+    let response;
+    const {workdayHoursDay,workdayDaysWeek,workdayDescription}=req.body;
+    const query=await pool.query(`call sp_post_workday(?,?,?)`,[workdayHoursDay,workdayDaysWeek,workdayDescription]);    
+    const queryParse = JSON.parse(JSON.stringify(query[0]));     
+    if (queryParse.affectedRows==0){
+       return response={
+            body:{errorNo:1062,errorMessage:"workday Description duplicate"},
+            code:403
+        }
+    }
+    return response={
+        body:{msg:"workDay created"},
+        code:200
+    } 
+}
+export const updateWorkday=async(req:Request)=>{
+    let response;
+    const {workdayId}=req.params
+    const {workdayHoursDay,workdayDaysWeek,workdayDescription}=req.body; 
+    await pool.query(`call sp_put_workday(?,?,?,?)`,
+    [parseInt(workdayHoursDay),parseInt(workdayDaysWeek),workdayDescription,workdayId])    
+    return response={
+        body:{msg:"workday updated"},
+        code:200
+    }
+}
+export const getDataWorkday=async(req:Request)=>{
+    let response;
+    const {page,size,workdayId}=req.query
+    const queryCount=await pool.query(`select count(*) as count from tbl_workday`);
+    const total = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;
+    if(page && size){
+        const _page=(parseInt(page as string));
+        const _size=(parseInt(size as string));        
+        const _pageCalc=(_page-1)*_size; 
+        const query=await pool.query(`call sp_get_workday(?,?,null)`,[_pageCalc,_size]);        
+        const data = (JSON.parse(JSON.stringify(query[0])))[0];         
+        return response={
+            body:{total,data},
+            code:200
+        } 
+    }else if (workdayId){
+        const query=await pool.query(`call sp_get_workday(null,null,?)`,[workdayId])          
+        const data = (JSON.parse(JSON.stringify(query[0])))[0];         
+        return response={
+            body:{total,data},
+            code:200
+            } ;        
+    }else {        
+        const query=await pool.query(`call sp_get_workday(null,null,null)`)       
         const data = (JSON.parse(JSON.stringify(query[0]))[0]);              
         return response={            
             body:{total,data},

@@ -376,7 +376,18 @@ router.get('/employee/labor_regime',verifyToken,employeeController.getLaborRegim
 router.post('/employee/occupational_group',verifyToken,employeeController.postOccupationalGroup)
 router.put('/employee/occupational_group/:occupationalGroupId',verifyToken,employeeController.putOccupationalGroup)
 router.get('/employee/occupational_group',verifyToken,employeeController.getOccupationalGroup)
-
+//TODO: ESTABLECIMIENTO
+router.post('/employee/establishment',verifyToken,employeeController.postEstablishment)
+router.put('/employee/establishment/:establishmentId',verifyToken,employeeController.putEstablishment)
+router.get('/employee/establishment',verifyToken,employeeController.getEstablishment)
+//TODO: CARGO
+router.post('/employee/position',verifyToken,employeeController.postPosition)
+router.put('/employee/position/:positionId',verifyToken,employeeController.putPosition)
+router.get('/employee/position',verifyToken,employeeController.getPosition)
+//TODO: JORNADA LABORAL
+router.post('/employee/workday',verifyToken,employeeController.postWorkday)
+router.put('/employee/workday/:workdayId',verifyToken,employeeController.putWorkday)
+router.get('/employee/workday',verifyToken,employeeController.getWorkday)
 
 //test
 router.get('/employee',employeeController.test)

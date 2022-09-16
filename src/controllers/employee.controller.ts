@@ -27,7 +27,16 @@ import {
     getDataLaborRegime,
     addOccupationalGroup,
     updateOccupationalGroup,
-    getDataOccupationalGroup} from "../services/employee.service";
+    getDataOccupationalGroup,
+    addEstablishment,
+    updateEstablishment,
+    getDataEstablishment,
+    addPosition,
+    updatePosition,
+    getDataPosition,
+    addWorkday,
+    updateWorkday,
+    getDataWorkday} from "../services/employee.service";
 
 export const addEmployee=async(req:Request,res:Response)=>{
     try {
@@ -255,5 +264,77 @@ export const getOccupationalGroup=async(req:Request,res:Response)=>{
         res.status(response.code).json(response.body);
     } catch (error) {
         handleHttp(res,"ERROR_GET_OccupationalGroup",error)
+    }
+}
+export const postEstablishment=async(req:Request,res:Response)=>{
+    try {
+        const response=await addEstablishment(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_POS_postEstablishment",error)
+    }
+}
+export const putEstablishment=async(req:Request,res:Response)=>{
+    try {
+        const response=await updateEstablishment(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_PUT_putEstablishment",error)
+    }
+}
+export const getEstablishment=async(req:Request,res:Response)=>{
+    try {
+        const response=await getDataEstablishment(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getEstablishment",error)
+    }
+}
+export const postPosition=async(req:Request,res:Response)=>{
+    try {
+        const response = await addPosition(req);
+        res.status(response.code).json(response.body)
+    } catch (error) {
+        handleHttp(res,"ERROR_POST_postPosition",error)
+    }
+}
+export const putPosition=async(req:Request,res:Response)=>{
+    try {
+        const response=await updatePosition(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_PUT_position",error)
+    }
+}
+export const getPosition=async(req:Request,res:Response)=>{
+    try {
+        const response=await getDataPosition(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getPosition",error)
+    }
+}
+export const postWorkday=async(req:Request,res:Response)=>{
+    try {
+        const response = await addWorkday(req);
+        res.status(response.code).json(response.body)
+    } catch (error) {
+        handleHttp(res,"ERROR_POST_postWorkday",error)
+    }
+}
+export const putWorkday=async(req:Request,res:Response)=>{
+    try {
+        const response=await updateWorkday(req);
+        res.status(response.code).json(response.body)
+    } catch (error) {
+        handleHttp(res,"ERROR_PUT_putWorkday",error)
+    }
+}
+export const getWorkday=async(req:Request,res:Response)=>{
+    try {
+        const response=await getDataWorkday(req);
+        res.status(response.code).json(response.body)
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getWorkday",error)
     }
 }
