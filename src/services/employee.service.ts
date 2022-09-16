@@ -132,9 +132,8 @@ export const getDataEmployees=async(req:Request)=>{
 export const createCategory=async(req:Request)=>{
     let response;
     const {employeeCategoryDescription,employeeCategoryShortDescription}=req.body;
-    const query= await pool.query(`
-       call sp_post_employeeCategory(?,?)
-    `,[employeeCategoryDescription,employeeCategoryShortDescription]);
+    const query= await pool.query(`call sp_post_employeeCategory(?,?)`,
+    [employeeCategoryDescription,employeeCategoryShortDescription]);
     response={
         body:{msg:"category created"},
         code:200
