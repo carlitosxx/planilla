@@ -801,7 +801,7 @@ export const getDataWorkday=async(req:Request)=>{
         } ;
     }
 }
-
+/**organic Unit */
 export const addOrganicUnit=async(req:Request)=>{
     let response;
     const {organicUnitCode,organicUnitDescription}=req.body;
@@ -818,7 +818,6 @@ export const addOrganicUnit=async(req:Request)=>{
         code:200
     } 
 }
-
 export const updateOrganicUnit=async(req:Request)=>{
     let response;
     const {organicUnitId}=req.params

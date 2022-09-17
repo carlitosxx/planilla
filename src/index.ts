@@ -8,6 +8,8 @@ import {connectDb} from './database';
 import userRoute from './routes/user.routes';
 import employeeRoute from './routes/employee.routes';
 import entityRoute from './routes/entity.routes';
+import financingRoute from './routes/financing.routes';
+import budgetGoal from './routes/budgetGoal.routes';
 const app = express();
 const port= process.env.PORT;
 //Config express 
@@ -33,7 +35,9 @@ app.use("/documentation",swaggerUi.serve,swaggerUi.setup(openApiConfiguration))
 // Routes API
 app.use(userRoute);
 app.use(employeeRoute);
-app.use(entityRoute)
+app.use(entityRoute);
+app.use(financingRoute);
+app.use(budgetGoal);
 // Executing server and Connect to DB
 app.listen(port,()=>{
 console.log('listening on port: ',port)
