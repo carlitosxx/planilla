@@ -40,6 +40,6 @@ export const getEntity=async(req:Request,res:Response)=>{
         const response=await serviceEntity.getdataEntity(req);
         return res.status(response.code).json(response.body);
     } catch (error) {
-        handleHttp(res,"ERROR_PUT_putEntity",error);
+        handleHttp(res,"ERROR_GET_getEntity",error);
     }
 }
