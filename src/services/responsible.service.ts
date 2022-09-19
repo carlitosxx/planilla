@@ -78,7 +78,11 @@ export const getDataResponsibleById=async(req:Request)=>{
     const queryCount=await pool.query(`select count(*) as count from tbl_responsible`);
     const total:number = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;  
     const query=await pool.query(`call sp_get_responsible(null,null,?)`,[responsibleId])     
-        const data = (JSON.parse(JSON.stringify(query[0])))[0];       
+    const dataRaw = (JSON.parse(JSON.stringify(query[0])))[0];         
+    const data=dataRaw.map((element:any)=>{
+        element.responsibleSignature='/storage/'+element.responsibleSignature            
+        return element
+    })         
         return response={
             body:{total,data},
             code:200
@@ -91,7 +95,11 @@ export const getDataResponsible=async(req:Request)=>{
     const total = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;
     if(page && size){        
         const query=await pool.query(`call sp_get_responsible(?,?,null)`,[page,size]);        
-        const data = (JSON.parse(JSON.stringify(query[0])))[0];        
+        const dataRaw = (JSON.parse(JSON.stringify(query[0])))[0];         
+    const data=dataRaw.map((element:any)=>{
+        element.responsibleSignature='/storage/'+element.responsibleSignature            
+        return element
+    })         
         return response={
             body:{total,data},
             code:200
@@ -99,7 +107,11 @@ export const getDataResponsible=async(req:Request)=>{
     }
     if (responsibleId){        
         const query=await pool.query(`call sp_get_responsible(null,null,?)`,[responsibleId])     
-        const data = (JSON.parse(JSON.stringify(query[0])))[0];       
+        const dataRaw = (JSON.parse(JSON.stringify(query[0])))[0];         
+        const data=dataRaw.map((element:any)=>{
+            element.responsibleSignature='/storage/'+element.responsibleSignature            
+            return element
+        })                
         return response={
             body:{total,data},
             code:200
@@ -108,7 +120,11 @@ export const getDataResponsible=async(req:Request)=>{
     else {     
           
         const query=await pool.query(`call sp_get_responsible(null,null,null)`)        
-        const data = (JSON.parse(JSON.stringify(query[0])))[0]; 
+        const dataRaw = (JSON.parse(JSON.stringify(query[0])))[0];         
+        const data=dataRaw.map((element:any)=>{
+            element.responsibleSignature='/storage/'+element.responsibleSignature            
+            return element
+        })         
         return response={            
             body:{total,data},
             code:200
