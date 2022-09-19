@@ -2,6 +2,7 @@ import {Router} from 'express';
 import * as employeeController from '../controllers/employee.controller';
 import {verifyToken} from '../middleware/verify_token.middleware';
 const router=Router();
+//TODO: employee
 /** 
  * @swagger
  * /employee:
@@ -41,7 +42,7 @@ const router=Router();
  *                              $ref: '#components/schemas/errorResponse'
  *              
 */
-router.post('/employee',verifyToken,employeeController.addEmployee);
+router.post('/employees',verifyToken,employeeController.addEmployee);
 /**
  * @swagger
  * /employee/{employeeId}:
@@ -84,7 +85,7 @@ router.post('/employee',verifyToken,employeeController.addEmployee);
  *                          schema:
  *                              $ref: '#components/schemas/errorResponse' 
  */
-router.put('/employee/:employeeId',verifyToken,employeeController.updateEmployee);
+router.put('/employees/:employeeId',verifyToken,employeeController.updateEmployee);
 /**
  * @swagger
  * /employee:
@@ -118,7 +119,9 @@ router.put('/employee/:employeeId',verifyToken,employeeController.updateEmployee
  *                              $ref: '#components/schemas/getEmployeesResponse'
  *          
  */
-router.get('/employee',verifyToken,employeeController.getEmployees);
+router.get('/employees',verifyToken,employeeController.getEmployees);
+router.get('/employees/:employeeId',verifyToken,employeeController.getEmployeeById)
+//TODO: category
 /**
  * @swagger
  * /employee/category:
@@ -235,6 +238,8 @@ router.put('/employee/category/:categoryId',verifyToken,employeeController.updat
  *                              $ref: '#components/schemas/getEmployeesResponse'
  */
 router.get('/employee/category',verifyToken,employeeController.getCategory)
+router.get('/employee/category/:employeeCategoryId',verifyToken,employeeController.getCategoryById)
+//TODO: category Salary
 /**
  * @swagger
  * /employee/category_salary:
@@ -351,47 +356,57 @@ router.put('/employee/category_salary/:categorySalaryId',verifyToken,employeeCon
  *                              $ref: '#components/schemas/getCategorySalaryResponse'
  */
 router.get('/employee/category_salary',verifyToken,employeeController.getCategorySalary);
-
+router.get('/employee/category_salary/:categorySalaryId',verifyToken,employeeController.getCategorySalaryById);
 //TODO: SISTEMA DE PENSION
 router.post('/employee/pension_system',verifyToken,employeeController.addPensionSystem);
 router.put('/employee/pension_system/:pensionSystemId',verifyToken,employeeController.updatePensionSystem);
 router.get('/employee/pension_system',verifyToken,employeeController.getPensionSystem);
+router.get('/employee/pension_system/:pensionSystemId',verifyToken,employeeController.getPensionSystemById)
 //TODO: ADMINISTRADOR DE PENSION
 router.post('/employee/pension_administrator',verifyToken,employeeController.addPensionAdministrator);
 router.put('/employee/pension_administrator/:pensionAdministratorId',verifyToken,employeeController.updatePensionAdministrator);
 router.get('/employee/pension_administrator',verifyToken,employeeController.getPensionAdministrator);
+router.get('/employee/pension_administrator/:pensionAdministratorId',verifyToken,employeeController.getPensionAdministratorById)
 //TODO: TIPO DE TRABAJADOR
 router.post('/employee/type_employee',verifyToken,employeeController.addTypeEmployee)
-router.get('/employee/type_employee',verifyToken,employeeController.getTypeEmployee)
 router.put('/employee/type_employee/:typeEmployeeId',verifyToken,employeeController.updateTypeEmployee)
+router.get('/employee/type_employee',verifyToken,employeeController.getTypeEmployee)
+router.get('/employee/type_employee/:typeEmployeeId',verifyToken,employeeController.getTypeEmployeeById)
 //TODO: CONDICION
 router.post('/employee/condition',verifyToken,employeeController.postCondition)
-router.get('/employee/condition',verifyToken,employeeController.getCondition)
 router.put('/employee/condition/:conditionId',verifyToken,employeeController.putCondition)
+router.get('/employee/condition',verifyToken,employeeController.getCondition)
+router.get('/employee/condition/:conditionId',verifyToken,employeeController.getConditionById)
 //TODO: REGIMEN LABORAL
 router.post('/employee/labor_regime',verifyToken,employeeController.postLaborRegime)
 router.put('/employee/labor_regime/:laborRegimeId',verifyToken,employeeController.putLaborRegime)
 router.get('/employee/labor_regime',verifyToken,employeeController.getLaborRegime)
+router.get('/employee/labor_regime/:laborRegimeId',verifyToken,employeeController.getLaborRegimeById)
 //TODO: GRUPO OCUPACIONAL
 router.post('/employee/occupational_group',verifyToken,employeeController.postOccupationalGroup)
 router.put('/employee/occupational_group/:occupationalGroupId',verifyToken,employeeController.putOccupationalGroup)
 router.get('/employee/occupational_group',verifyToken,employeeController.getOccupationalGroup)
+router.get('/employee/occupational_group/:occupationalGroupId',verifyToken,employeeController.getOccupationalGroupById)
 //TODO: ESTABLECIMIENTO
 router.post('/employee/establishment',verifyToken,employeeController.postEstablishment)
 router.put('/employee/establishment/:establishmentId',verifyToken,employeeController.putEstablishment)
 router.get('/employee/establishment',verifyToken,employeeController.getEstablishment)
+router.get('/employee/establishment/:establishmentId',verifyToken,employeeController.getEstablishmentById)
 //TODO: CARGO
 router.post('/employee/position',verifyToken,employeeController.postPosition)
 router.put('/employee/position/:positionId',verifyToken,employeeController.putPosition)
 router.get('/employee/position',verifyToken,employeeController.getPosition)
+router.get('/employee/position/:positionId',verifyToken,employeeController.getPositionById)
 //TODO: JORNADA LABORAL
 router.post('/employee/workday',verifyToken,employeeController.postWorkday)
 router.put('/employee/workday/:workdayId',verifyToken,employeeController.putWorkday)
 router.get('/employee/workday',verifyToken,employeeController.getWorkday)
+router.get('/employee/workday/:workdayId',verifyToken,employeeController.getWorkdayById)
 //TODO: UNIDAD ORGANICA
 router.post('/employee/organic_unit',verifyToken,employeeController.postOrganicUnit)
 router.put('/employee/organic_unit/:organicUnitId',verifyToken,employeeController.putOrganicUnit)
 router.get('/employee/organic_unit',verifyToken,employeeController.getOrganicUnit)
+router.get('/employee/organic_unit/:organicUnitId',verifyToken,employeeController.getOrganicUnitById)
 
 
 //test

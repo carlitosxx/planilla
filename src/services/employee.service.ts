@@ -1,6 +1,6 @@
 import {Request } from 'express';
 import {pool} from '../database';
-import { jsonToEmployee, Iemployee, IemployeeCategory, IcategorySalary, jsonToCategorySalary, IpensionAdministrator, jsonToPensionAdministrator } from '../models/raw/user.model';
+import { jsonToEmployee, Iemployee, IemployeeCategory, IcategorySalary, jsonToCategorySalary, IpensionAdministrator, jsonToPensionAdministrator, IpensionSystem, ItypeEmployee, Icondition, IlaborRegime, IoccupationalGroup, Iestablishment, Iposition, Iworkday, IorganicUnit } from '../models/raw/user.model';
 /**Employee */
 export const createEmployee=async(req:Request)=>{
     let response;
@@ -132,6 +132,19 @@ export const getDataEmployees=async(req:Request)=>{
         } ;
     }
 }
+export const getDataEmployeeById=async(req:Request)=>{
+    let response;
+    const {employeeId}=req.params
+    const queryCount=await pool.query(`select count(*) as count from tbl_employee`);
+    const total:number = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;  
+    const query=await pool.query(`call sp_get_employee(null,null,?)`,[employeeId])     
+        const queryParse:JSON = (JSON.parse(JSON.stringify(query[0])))[0];   
+        const data:Iemployee=jsonToEmployee(queryParse) 
+        return response={
+            body:{total,data},
+            code:200
+            };     
+}
 /**employeeCategory */
 export const createCategory=async(req:Request)=>{
     let response;
@@ -158,12 +171,12 @@ export const updateDataCategory=async(req:Request)=>{
     return response;   
    
 }
-export const getDataCategory=async(req:Request)=>{
+export const getDataCategory=async(req:Request)=>{   
     let response;
     const {page,size,employeeCategoryId}=req.query
     const queryCount=await pool.query(`select count(*) as count from tbl_employeeCategory`);
     const total = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;
-    if(page && size){
+    if(page && size){        
         const query=await pool.query(`call sp_get_employeeCategory(?,?,null)`,[page,size]);        
         const data:IemployeeCategory = (JSON.parse(JSON.stringify(query[0])))[0];        
         return response={
@@ -171,7 +184,7 @@ export const getDataCategory=async(req:Request)=>{
             code:200
         }
     }
-    if (employeeCategoryId){
+    if (employeeCategoryId){        
         const query=await pool.query(`call sp_get_employeeCategory(null,null,?)`,[employeeCategoryId])     
         const data:IemployeeCategory = (JSON.parse(JSON.stringify(query[0])))[0];       
         return response={
@@ -179,15 +192,28 @@ export const getDataCategory=async(req:Request)=>{
             code:200
             };         
     }
-    else {        
+    else {     
+          
         const query=await pool.query(`call sp_get_employeeCategory(null,null,null)`)        
         const data:IemployeeCategory = (JSON.parse(JSON.stringify(query[0])))[0]; 
         return response={            
             body:{total,data},
             code:200
         } ;
-    }
-    
+    }    
+}
+export const getDataCategoryById=async(req:Request)=>{    
+    let response;
+    const {employeeCategoryId}=req.params
+    console.log(employeeCategoryId)
+    const queryCount=await pool.query(`select count(*) as count from tbl_employeeCategory`);
+    const total:number = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;  
+    const query=await pool.query(`call sp_get_employeeCategory(null,null,?)`,[employeeCategoryId])     
+        const data:IemployeeCategory = (JSON.parse(JSON.stringify(query[0])))[0];       
+        return response={
+            body:{total,data},
+            code:200
+            };        
 }
 /**categorySalary */
 export const createCategorySalary=async(req:Request)=>{
@@ -251,6 +277,18 @@ export const getDataCategorySalary=async(req:Request)=>{
         } ;
     }
 }
+export const getDataCategorySalaryById=async(req:Request)=>{
+    let response;
+    const {categorySalaryId}=req.params    
+    const queryCount=await pool.query(`select count(*) as count from tbl_categorySalary`);
+    const total:number = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;  
+    const query=await pool.query(`call sp_get_categorySalary(null,null,?)`,[categorySalaryId])     
+        const data:IcategorySalary = (JSON.parse(JSON.stringify(query[0])))[0];       
+        return response={
+            body:{total,data},
+            code:200
+            }; 
+}
 /**pensionSystem */
 export const createPensionSystem=async(req:Request)=>{
     let response;
@@ -311,6 +349,18 @@ export const getDataPensionSystem=async(req:Request)=>{
             code:200
         };
     }    
+}
+export const getDataPensionSystemById=async(req:Request)=>{
+    let response;
+    const {pensionSystemId}=req.params    
+    const queryCount=await pool.query(`select count(*) as count from tbl_pensionSystem`);
+    const total:number = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;  
+    const query=await pool.query(`call sp_get_pensionSystem(null,null,?)`,[pensionSystemId])     
+        const data:IpensionSystem = (JSON.parse(JSON.stringify(query[0])))[0];       
+        return response={
+            body:{total,data},
+            code:200
+            };
 }
 /**pensionAdministrator */
 export const createPensionAdministrator=async(req:Request)=>{
@@ -388,6 +438,18 @@ export const getDataPensionAdministrator= async(req:Request)=>{
         } ;
     }
 }
+export const getDataPensionAdministratorById=async(req:Request)=>{
+    let response;
+    const {pensionAdministratorId}=req.params    
+    const queryCount=await pool.query(`select count(*) as count from tbl_pensionAdministrator`);
+    const total:number = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;  
+    const query=await pool.query(`call sp_get_pensionAdministrator(null,null,?)`,[pensionAdministratorId])     
+        const data:IpensionAdministrator = (JSON.parse(JSON.stringify(query[0])))[0];       
+        return response={
+            body:{total,data},
+            code:200
+            };
+}
 /**typeEmployee */
 export const createTypeEmployee=async (req:Request)=>{
     let response;
@@ -448,6 +510,18 @@ export const getDataTypeEmployee=async(req:Request)=>{
         } ;
     }
 }
+export const getDataTypeEmployeeById=async(req:Request)=>{
+    let response;
+    const {typeEmployeeId}=req.params    
+    const queryCount=await pool.query(`select count(*) as count from tbl_typeEmployee`);
+    const total:number = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;  
+    const query=await pool.query(`call sp_get_typeEmployee(null,null,?)`,[typeEmployeeId])     
+        const data:ItypeEmployee= (JSON.parse(JSON.stringify(query[0])))[0];       
+        return response={
+            body:{total,data},
+            code:200
+            };
+}
 /**condition*/
 export const addCondition=async(req:Request)=>{
     let response;
@@ -506,6 +580,18 @@ export const getDataCondition=async(req:Request)=>{
         } ;
     }
 }
+export const getDataConditionById=async(req:Request)=>{
+    let response;
+    const {conditionId}=req.params    
+    const queryCount=await pool.query(`select count(*) as count from tbl_condition`);
+    const total:number = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;  
+    const query=await pool.query(`call sp_get_condition(null,null,?)`,[conditionId])     
+        const data:Icondition= (JSON.parse(JSON.stringify(query[0])))[0];       
+        return response={
+            body:{total,data},
+            code:200
+            };
+}
 /**labor regime */
 export const addLaborRegime =async(req:Request)=>{
     let response;
@@ -563,6 +649,18 @@ export const getDataLaborRegime=async(req:Request)=>{
             code:200
         } ;
     }
+}
+export const getDataLaborRegimeById=async(req:Request)=>{
+    let response;
+    const {laborRegimeId}=req.params    
+    const queryCount=await pool.query(`select count(*) as count from tbl_laborRegime`);
+    const total:number = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;  
+    const query=await pool.query(`call sp_get_laborRegime(null,null,?)`,[laborRegimeId])     
+        const data:IlaborRegime= (JSON.parse(JSON.stringify(query[0])))[0];       
+        return response={
+            body:{total,data},
+            code:200
+            };
 }
 /**occupational group */
 export const addOccupationalGroup=async(req:Request)=>{
@@ -623,6 +721,18 @@ export const getDataOccupationalGroup=async(req:Request)=>{
         } ;
     }
 }
+export const getDataOccupationalGroupById=async(req:Request)=>{
+    let response;
+    const {occupationalGroupId}=req.params    
+    const queryCount=await pool.query(`select count(*) as count from tbl_occupationalGroup`);
+    const total:number = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;  
+    const query=await pool.query(`call sp_get_occupationalGroup(null,null,?)`,[occupationalGroupId])     
+        const data:IoccupationalGroup= (JSON.parse(JSON.stringify(query[0])))[0];       
+        return response={
+            body:{total,data},
+            code:200
+            };
+}
 /**establishment */
 export const addEstablishment=async(req:Request)=>{
     let response;
@@ -681,6 +791,18 @@ export const getDataEstablishment=async(req:Request)=>{
             code:200
         } ;
     }
+}
+export const getDataEstablishmentById=async(req:Request)=>{
+    let response;
+    const {establishmentId}=req.params    
+    const queryCount=await pool.query(`select count(*) as count from tbl_establishment`);
+    const total:number = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;  
+    const query=await pool.query(`call sp_get_establishment(null,null,?)`,[establishmentId])     
+        const data:Iestablishment= (JSON.parse(JSON.stringify(query[0])))[0];       
+        return response={
+            body:{total,data},
+            code:200
+            };
 }
 /**position */
 export const addPosition=async(req:Request)=>{
@@ -741,7 +863,18 @@ export const getDataPosition=async(req:Request)=>{
         } ;
     }
 }
-
+export const getDataPositionById=async(req:Request)=>{
+    let response;
+    const {positionId}=req.params    
+    const queryCount=await pool.query(`select count(*) as count from tbl_position`);
+    const total:number = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;  
+    const query=await pool.query(`call sp_get_position(null,null,?)`,[positionId])     
+        const data:Iposition= (JSON.parse(JSON.stringify(query[0])))[0];       
+        return response={
+            body:{total,data},
+            code:200
+            };
+}
 /**workday */
 export const addWorkday=async(req:Request)=>{
     let response;
@@ -801,6 +934,18 @@ export const getDataWorkday=async(req:Request)=>{
         } ;
     }
 }
+export const getDataWorkdayById=async(req:Request)=>{
+    let response;
+    const {workdayId}=req.params    
+    const queryCount=await pool.query(`select count(*) as count from tbl_workday`);
+    const total:number = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;  
+    const query=await pool.query(`call sp_get_workday(null,null,?)`,[workdayId])     
+        const data:Iworkday= (JSON.parse(JSON.stringify(query[0])))[0];       
+        return response={
+            body:{total,data},
+            code:200
+            };
+}
 /**organic Unit */
 export const addOrganicUnit=async(req:Request)=>{
     let response;
@@ -859,4 +1004,16 @@ export const getDataOrganicUnit=async(req:Request)=>{
             code:200
         } ;
     }
+}
+export const getDataOrganicUnitById=async(req:Request)=>{
+    let response;
+    const {organicUnitId}=req.params    
+    const queryCount=await pool.query(`select count(*) as count from tbl_organicUnit`);
+    const total:number = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;  
+    const query=await pool.query(`call sp_get_organicUnit(null,null,?)`,[organicUnitId])     
+        const data:IorganicUnit= (JSON.parse(JSON.stringify(query[0])))[0];       
+        return response={
+            body:{total,data},
+            code:200
+            };
 }

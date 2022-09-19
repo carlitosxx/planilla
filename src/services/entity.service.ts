@@ -14,12 +14,13 @@ export const addEntity=async(req:Request)=>{
         entityRuc,
         entityCode,
         entityName,
-        entityEmployer        
+        entityEmployer,
+        entityStatus        
         }=req.body;
     const {file}=req;
     const pathFilename="/storage/"+file?.filename;   
-    const query= await pool.query(`call sp_post_entity(?,?,?,?,?)`,
-    [entityRuc,entityCode,entityName,entityEmployer,pathFilename]);
+    const query= await pool.query(`call sp_post_entity(?,?,?,?,?,?)`,
+    [entityRuc,entityCode,entityName,entityEmployer,entityStatus,pathFilename]);
     const queryParse = JSON.parse(JSON.stringify(query[0]));     
     if (queryParse.affectedRows==0){
         return response={
@@ -40,10 +41,11 @@ export const updateEntity=async(req:Request)=>{
     const { entityRuc,
         entityCode,
         entityName,
-        entityEmployer  }=req.body
+        entityEmployer,
+        entityStatus  }=req.body
         const {file}=req; 
-        const query= await pool.query(`call sp_put_entity(?,?,?,?,?,?)`,
-        [entityRuc,entityCode,entityName,entityEmployer,file?.filename,entityId]);     
+        const query= await pool.query(`call sp_put_entity(?,?,?,?,?,?,?)`,
+        [entityRuc,entityCode,entityName,entityEmployer,entityStatus,file?.filename,entityId]);     
      if(!((JSON.parse(JSON.stringify(query[0])))[0])[0]){
         await unlinkAsync(directory+`/${file?.filename}`)
         return response={

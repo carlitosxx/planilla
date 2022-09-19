@@ -1,7 +1,7 @@
 import {Request,Response} from 'express';
 import {handleHttp} from "../utils/error.handle";
 import * as serviceEmployee from "../services/employee.service";
-
+/**Employee */
 export const addEmployee=async(req:Request,res:Response)=>{
     try {
         const response=await serviceEmployee.createEmployee(req);
@@ -24,7 +24,15 @@ export const getEmployees=async(req:Request,res:Response)=>{
         res.status(response.code).json(response.body);
         
     } catch (error) {
-        handleHttp(res,"ERROR_GET_getEmployess",error)
+        handleHttp(res,"ERROR_GET_getEmployees",error)
+    }
+}
+export const getEmployeeById=async(req:Request,res:Response)=>{
+    try {
+        const response= await serviceEmployee.getDataEmployeeById(req);
+        res.status(response.code).json(response.body);        
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getEmployeeById",error)
     }
 }
 export const test=async(req:Request,res:Response)=>{
@@ -36,6 +44,7 @@ export const test=async(req:Request,res:Response)=>{
         handleHttp(res,"ERROR_POST_addCategory",error)
     }
 }
+/**Category */
 export const addCategory=async(req:Request,res:Response)=>{
     try {
         const response=await serviceEmployee.createCategory(req);
@@ -53,15 +62,24 @@ export const updateCategory=async(req:Request,res:Response)=>{
     }
     
 }
-export const getCategory=async(req:Request,res:Response)=>{
-    
+export const getCategory=async(req:Request,res:Response)=>{    
     try {
+        console.log('controller category')
         const response=await serviceEmployee.getDataCategory(req);
         res.status(response.code).json(response.body);
     } catch (error) {
-        handleHttp(res,"ERROR_GET_getEmployess",error)
+        handleHttp(res,"ERROR_GET_getCategory",error)
     }
 }
+export const getCategoryById=async(req:Request,res:Response)=>{
+    try {        
+        const response=await serviceEmployee.getDataCategoryById(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getCategoryById",error)
+    }
+}
+/**Category Salary */
 export const addCategorySalary=async(req:Request,res:Response)=>{
     try {
         const response=await serviceEmployee.createCategorySalary(req);
@@ -86,6 +104,15 @@ export const getCategorySalary=async(req:Request,res:Response)=>{
         handleHttp(res,"ERROR_GET_getCategorySalary",error);
     }
 }
+export const getCategorySalaryById=async(req:Request,res:Response)=>{
+    try {
+        const response=await serviceEmployee.getDataCategorySalaryById(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getCategorySalaryById",error);
+    }
+}
+/**Pension System */
 export const addPensionSystem=async(req:Request,res:Response)=>{
     try {
         const response=await serviceEmployee.createPensionSystem(req);
@@ -110,6 +137,15 @@ export const getPensionSystem=async(req:Request,res:Response)=>{
         handleHttp(res,"ERROR_GET_getPensionSystemm",error)
     }
 }
+export const getPensionSystemById=async(req:Request,res:Response)=>{
+    try {
+        const response=await serviceEmployee.getDataPensionSystemById(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getCategorySalaryById",error);
+    }
+}
+/**Pension Administrato */
 export const addPensionAdministrator=async(req:Request,res:Response)=>{
     try {
         const response=await serviceEmployee.createPensionAdministrator(req);
@@ -134,6 +170,15 @@ export const getPensionAdministrator= async(req:Request,res:Response)=>{
         handleHttp(res,"ERROR_GET_getPensionAdministrator",error)
     }
 }
+export const getPensionAdministratorById=async(req:Request,res:Response)=>{
+    try {
+        const response=await serviceEmployee.getDataPensionAdministratorById(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getPensionAdministratorById",error)
+    }
+}
+/**Type employee */
 export const addTypeEmployee=async(req:Request,res:Response)=>{
     try {
         const response=await serviceEmployee.createTypeEmployee(req);
@@ -158,6 +203,15 @@ export const getTypeEmployee=async(req:Request,res:Response)=>{
         handleHttp(res,"ERROR_GET_getTypeEmployee",error)
     }
 }
+export const getTypeEmployeeById=async(req:Request,res:Response)=>{
+    try {
+        const response=await serviceEmployee.getDataTypeEmployeeById(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getTypeEmployeeById",error)
+    }
+}
+/**Condition */
 export const postCondition=async(req:Request,res:Response)=>{
     try {
         const response=await serviceEmployee.addCondition(req);
@@ -179,9 +233,18 @@ export const getCondition=async(req:Request,res:Response)=>{
         const response=await serviceEmployee.getDataCondition(req);
         res.status(response.code).json(response.body);
     } catch (error) {
-        handleHttp(res,"ERROR_PUT_putCondition",error)
+        handleHttp(res,"ERROR_GET_getCondition",error)
     }
 }
+export const getConditionById=async(req:Request,res:Response)=>{
+    try {
+        const response=await serviceEmployee.getDataConditionById(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getConditionById",error)
+    }
+}
+/**Labor Regime */
 export const postLaborRegime=async(req:Request,res:Response)=>{
     try {
         const response=await serviceEmployee.addLaborRegime(req);
@@ -206,6 +269,15 @@ export const getLaborRegime=async(req:Request,res:Response)=>{
         handleHttp(res,"ERROR_GET_getLaborRegime",error)
     }
 }
+export const getLaborRegimeById=async(req:Request,res:Response)=>{
+    try {
+        const response=await serviceEmployee.getDataLaborRegimeById(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getLaborRegimeById",error)
+    }
+}
+/**Occupational Group */
 export const postOccupationalGroup=async(req:Request,res:Response)=>{
     try {
         const response=await serviceEmployee.addOccupationalGroup(req);
@@ -230,6 +302,15 @@ export const getOccupationalGroup=async(req:Request,res:Response)=>{
         handleHttp(res,"ERROR_GET_OccupationalGroup",error)
     }
 }
+export const getOccupationalGroupById=async(req:Request,res:Response)=>{
+    try {
+        const response=await serviceEmployee.getDataOccupationalGroupById(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getOccupationalGroupById",error)
+    }
+}
+/**Establishment */
 export const postEstablishment=async(req:Request,res:Response)=>{
     try {
         const response=await serviceEmployee.addEstablishment(req);
@@ -254,6 +335,15 @@ export const getEstablishment=async(req:Request,res:Response)=>{
         handleHttp(res,"ERROR_GET_getEstablishment",error)
     }
 }
+export const getEstablishmentById=async(req:Request,res:Response)=>{
+    try {
+        const response=await serviceEmployee.getDataEstablishmentById(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getEstablishmentById",error)
+    }
+}
+/**Position */
 export const postPosition=async(req:Request,res:Response)=>{
     try {
         const response = await serviceEmployee.addPosition(req);
@@ -278,6 +368,15 @@ export const getPosition=async(req:Request,res:Response)=>{
         handleHttp(res,"ERROR_GET_getPosition",error)
     }
 }
+export const getPositionById=async(req:Request,res:Response)=>{
+    try {
+        const response=await serviceEmployee.getDataPositionById(req);
+        res.status(response.code).json(response.body);
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getPositionById",error)
+    }
+}
+/**Workday */
 export const postWorkday=async(req:Request,res:Response)=>{
     try {
         const response = await serviceEmployee.addWorkday(req);
@@ -302,7 +401,15 @@ export const getWorkday=async(req:Request,res:Response)=>{
         handleHttp(res,"ERROR_GET_getWorkday",error)
     }
 }
-
+export const getWorkdayById=async(req:Request,res:Response)=>{
+    try {
+        const response=await serviceEmployee.getDataWorkdayById(req);
+        res.status(response.code).json(response.body)
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getWorkdayById",error)
+    }
+}
+/**Organic Unit */
 export const postOrganicUnit=async(req:Request,res:Response)=>{
     try {
         const response=await serviceEmployee.addOrganicUnit(req);
@@ -325,5 +432,13 @@ export const getOrganicUnit=async(req:Request,res:Response)=>{
         res.status(response.code).json(response.body)
     } catch (error) {
         handleHttp(res,"ERROR_GET_getOrganicUnit",error)
+    }
+}
+export const getOrganicUnitById=async(req:Request,res:Response)=>{
+    try {
+        const response=await serviceEmployee.getDataOrganicUnitById(req);
+        res.status(response.code).json(response.body)
+    } catch (error) {
+        handleHttp(res,"ERROR_GET_getOrganicUnitById",error)
     }
 }
