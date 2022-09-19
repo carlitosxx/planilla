@@ -10,6 +10,7 @@ import employeeRoute from './routes/employee.routes';
 import entityRoute from './routes/entity.routes';
 import financingRoute from './routes/financing.routes';
 import budgetGoal from './routes/budgetGoal.routes';
+import responsibleRoute from './routes/responsible.routes';
 const app = express();
 const port= process.env.PORT;
 //Config express 
@@ -38,6 +39,7 @@ app.use(employeeRoute);
 app.use(entityRoute);
 app.use(financingRoute);
 app.use(budgetGoal);
+app.use(responsibleRoute);
 // Executing server and Connect to DB
 app.listen(port,()=>{
 console.log('listening on port: ',port)

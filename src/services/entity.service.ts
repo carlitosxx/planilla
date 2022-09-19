@@ -2,7 +2,7 @@ import {Request } from 'express';
 import {pool} from '../database';
 import  * as fs from 'fs';
 import {promisify} from 'util'
-import path from 'path';
+import path, { join } from 'path';
 import {Ientity} from '../models/raw/entity.model'
 
 
@@ -36,7 +36,8 @@ export const addEntity=async(req:Request)=>{
 export const updateEntity=async(req:Request)=>{
    try {
     let response;
-    const directory=path.join(__dirname , "../storage")   
+    const directory=path.join(__dirname,'..' )   
+    console.log(directory);
     const {entityId}=req.params
     const { entityRuc,
         entityCode,
@@ -44,10 +45,13 @@ export const updateEntity=async(req:Request)=>{
         entityEmployer,
         entityStatus  }=req.body
         const {file}=req; 
+        const pathFilename="/storage/"+file?.filename;  
         const query= await pool.query(`call sp_put_entity(?,?,?,?,?,?,?)`,
-        [entityRuc,entityCode,entityName,entityEmployer,entityStatus,file?.filename,entityId]);     
+        [entityRuc,entityCode,entityName,entityEmployer,entityStatus,pathFilename,entityId]);     
      if(!((JSON.parse(JSON.stringify(query[0])))[0])[0]){
-        await unlinkAsync(directory+`/${file?.filename}`)
+        // const joinDirectory=path.join(directory,`/storage/${file?.filename}`)
+        // console.log(joinDirectory);
+        // await unlinkAsync(directory+`/storage/${file?.filename}`)
         return response={
         body:{msg:"entity not found"},
         code:400
