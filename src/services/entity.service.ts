@@ -82,7 +82,11 @@ export const getdataEntity=async(req:Request)=>{
     const total = (JSON.parse(JSON.stringify(queryCount[0])))[0].count;
     if(page && size){
         const query=await pool.query(`call sp_get_entity(?,?,null)`,[page,size]);        
-        const data:Ientity = (JSON.parse(JSON.stringify(query[0])))[0];        
+        const dataRaw = (JSON.parse(JSON.stringify(query[0])))[0];         
+        const data=dataRaw.map((element:any)=>{
+            element.entityLogo='/storage/'+element.entityLogo            
+            return element
+        })               
         return response={
             body:{total,data},
             code:200
@@ -90,7 +94,11 @@ export const getdataEntity=async(req:Request)=>{
     }
     if (entityId){
         const query=await pool.query(`call sp_get_entity(null,null,?)`,[entityId])     
-        const data:Ientity = (JSON.parse(JSON.stringify(query[0])))[0];       
+        const dataRaw = (JSON.parse(JSON.stringify(query[0])))[0];         
+        const data=dataRaw.map((element:any)=>{
+            element.entityLogo='/storage/'+element.entityLogo            
+            return element
+        })        
         return response={
             body:{total,data},
             code:200
@@ -98,7 +106,11 @@ export const getdataEntity=async(req:Request)=>{
     }
     else {        
         const query=await pool.query(`call sp_get_entity(null,null,null)`)        
-        const data:Ientity = (JSON.parse(JSON.stringify(query[0])))[0]; 
+        const dataRaw = (JSON.parse(JSON.stringify(query[0])))[0];         
+        const data=dataRaw.map((element:any)=>{
+            element.entityLogo='/storage/'+element.entityLogo            
+            return element
+        })        
         return response={            
             body:{total,data},
             code:200
