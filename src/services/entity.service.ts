@@ -18,9 +18,9 @@ export const addEntity=async(req:Request)=>{
         entityStatus        
         }=req.body;
     const {file}=req;
-    const pathFilename="/storage/"+file?.filename;   
+    // const pathFilename="/storage/"+file?.filename;   
     const query= await pool.query(`call sp_post_entity(?,?,?,?,?,?)`,
-    [entityRuc,entityCode,entityName,entityEmployer,entityStatus,pathFilename]);
+    [entityRuc,entityCode,entityName,entityEmployer,entityStatus,file?.filename]);
     const queryParse = JSON.parse(JSON.stringify(query[0]));     
     if (queryParse.affectedRows==0){
         return response={
@@ -36,7 +36,7 @@ export const addEntity=async(req:Request)=>{
 export const updateEntity=async(req:Request)=>{
    try {
     let response;
-    const directory=path.join(__dirname,'..' )   
+    const directory=path.join(__dirname,'..','storage' )   
     console.log(directory);
     const {entityId}=req.params
     const { entityRuc,
@@ -45,19 +45,20 @@ export const updateEntity=async(req:Request)=>{
         entityEmployer,
         entityStatus  }=req.body
         const {file}=req; 
-        const pathFilename="/storage/"+file?.filename;  
+        // const pathFilename="/storage/"+file?.filename;  
         const query= await pool.query(`call sp_put_entity(?,?,?,?,?,?,?)`,
-        [entityRuc,entityCode,entityName,entityEmployer,entityStatus,pathFilename,entityId]);     
+        [entityRuc,entityCode,entityName,entityEmployer,entityStatus,file?.filename,entityId]);     
      if(!((JSON.parse(JSON.stringify(query[0])))[0])[0]){
-        // const joinDirectory=path.join(directory,`/storage/${file?.filename}`)
-        // console.log(joinDirectory);
-        // await unlinkAsync(directory+`/storage/${file?.filename}`)
+        const pathDelete= path.join(directory,`${file?.filename}`)
+        console.log(pathDelete)        
+        await unlinkAsync(pathDelete)
         return response={
         body:{msg:"entity not found"},
         code:400
     }}
     const previousEntityLogo=((JSON.parse(JSON.stringify(query[0])))[0])[0].entityLogo;     
-      
+    const pathDelete= path.join(directory,previousEntityLogo)
+    console.log(pathDelete)
     await unlinkAsync(directory+`/${previousEntityLogo}`)
     response={
         body:{msg:"entity updated"},
